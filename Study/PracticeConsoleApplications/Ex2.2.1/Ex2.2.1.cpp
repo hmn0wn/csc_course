@@ -136,6 +136,8 @@ char *diff(char *x, char *y){															//Первое число априори больше второг
 }
 
 char *simplexy(char x, char y){
+	if (x == 0) x = '0';
+	if (y == 0) y = '0';
 	char *z;
 	size_t z_ = (x - '0')*(y - '0');
 	if (z_>= 10){
@@ -164,7 +166,7 @@ char *karatsuba(char *x, char *y){
 	
 
 	//А вот теперь возьмем, и дополним меньшее число нулями слева, до большего, до совпадения длины.
-	if (N > M){
+	/*if (N > M){
 		strinvert(y);
 		tmp = rshift(y, N - M);
 		free(x);
@@ -179,11 +181,17 @@ char *karatsuba(char *x, char *y){
 		x = tmp;
 		strinvert(x);
 		N = M;
-	}
+	}*/
 	
 	if (L == 1) return simplexy(x[0], y[0]);
 
-
+	//Укорачиваем дерево, производя умножение на ноль сразу.
+	if (N == 0 || M == 0 || (N == 1 && x[0] == '0') || (M == 1 && y[0] == '0')) {
+		char *z = (char *)malloc(2);
+		z[0] = '0';
+		z[1] = 0;
+		return z;
+	}
 	
 	size_t xln = (N > n_) ? N-n_ : 0;	//Индивидуальная длина левоко куска, если числа сильно разнятся по длине.
 	//size_t xln = N - n_;				//Старый вариант.
@@ -207,7 +215,7 @@ char *karatsuba(char *x, char *y){
 
 	size_t yrn = (M > n_) ? n_ : M;
 	//size_t yrn = n_;
-	char *yr = (char *)malloc(yln + 1);
+	char *yr = (char *)malloc(yrn + 1);
 	yr[yrn] = 0;
 	for (size_t i = M - yrn; i < M; i++)
 		yr[i + yrn - M] = y[i];
@@ -230,7 +238,7 @@ char *karatsuba(char *x, char *y){
 	free(xr);
 	tmp1 = add(yl, yr);
 	free(yl);
-	free(yr);
+	free(yr); // UNDONE: Программа валится
 	p3 = karatsuba(tmp, tmp1);
 	free(tmp);
 	free(tmp1);
@@ -320,16 +328,16 @@ size_t main()
 #pragma endregion	
 
 #pragma region Целевое действие.
-	size_t N = 10000;
-	char *x = (char *)malloc(N + 1);
-	x = (char *)memset(x, '9', N);
-	x[N] = 0;
-	char *y = (char *)malloc(N + 1);
-	y = (char *)memset(y, '9', N);
-	y[N] = 0;
-	
-	char *z = karatsuba(x, y);
-	printf("%s\n", z);
+	//size_t N = 10000;
+	//char *x = (char *)malloc(N + 1);
+	//x = (char *)memset(x, '9', N);
+	//x[N] = 0;
+	//char *y = (char *)malloc(N + 1);
+	//y = (char *)memset(y, '9', N);
+	//y[N] = 0;
+	//
+	//char *z = karatsuba(x, y);
+	//printf("%s\n", z);
 #pragma endregion
 
 	//Тестирование суммы, разности, инверсии и сдвига входных данных.
@@ -378,18 +386,19 @@ size_t main()
 	}*/
 
 	//Тестирование суммы и произведения перебором.
-	/*size_t z,z_;
+	size_t z,z_;
 	char *sz, *si, *sj;
 	for (size_t i = 0; i < 1000; i++){
 		for (size_t j = 0; j < 1000; j++){
 			sz = (karatsuba(inttostr(i),inttostr(j)));
 			z = atoi(sz);
 			z_ = i*j;
-			if(z!=z_) printf("%i * %i = %i / %s\n",i,j,z_,sz);
+			if(z!=z_)
+				printf("%i * %i = %i / %s\n",i,j,z_,sz);
 			free(sz);
 			
 		}
-	}*/
+	}
 	
 	
 	//Тестирование правого сдвига перебором.
