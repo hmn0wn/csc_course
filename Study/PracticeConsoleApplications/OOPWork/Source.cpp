@@ -253,9 +253,10 @@ _array<T>::_array(){
 template <class T>
 void _array<T>::add(T value){
 	if (count == SIZE) {
-		cout << "Overflow" << endl;
+		cout<< endl << "!!!MASSIVE OVERFLOW!!!";
 		return;
 	}
+	
 	element[count] = value;
 	count++;
 }
@@ -285,7 +286,7 @@ size_t _array<T>::getcount(){
 //один и он же и уточняет тип на этапе наследования;
 
 
-class server : public computer, public _array <computer>{
+class server : public computer, public _array <computer>{//Данный момент определения типа массива при наследовании и есть демонстрация статического полиморфизма.
 	
 public:
 	server(char *, int, char *, long, int, int, int, int, int);
@@ -393,7 +394,7 @@ void main(int argc, char *argv[]){
 
 			}
 			
-			cout << "Server: " << endl;
+			cout << endl << "Server: " << endl;
 			serv.show_properties(cout);
 			//--->несмотря на это, метод для вывода разнотипных элементов один и тот же,
 			//он реализован еще в классе предке, в компьютере, а объявлен как виртуальный, еще в базовом
