@@ -58,6 +58,21 @@ void mother_board::show_properties(void){
 	cout << "RAM:\t" << RAM << " Mb" << endl;
 }
 
+class computerObj :public computer_screen, public mother_board{
+public:
+	computerObj(char *, int, char *, long, int, int, int, int, int);
+	void show_properties();
+private:
+	char name[64];
+};
+
+/*computerObj::computerObj(char *name, char *screen_type, long colors, int x_res, int y_res, int processor, int speed, int ram) :
+computer_screen(screen_type, colors, x_res, y_res), mother_board(processor, speed, ram){
+	strcpy(computerObj::name, name);
+	
+}
+*/
+
 class computer : public computer_screen, public mother_board{
 
 public:
@@ -84,7 +99,7 @@ void computer::show_properties(void){
 	mother_board::show_properties ();
 }
 
-
+#pragma region List
 class List{
 	
 public:
@@ -151,24 +166,74 @@ void List::clean(){
 size_t List::getcount(){
 	return count;
 }
+#pragma endregion 
 
+#pragma region TemplateArray
+const size_t SIZE = 10;
+template <class T>
+class _array{
+	T element[SIZE];
+	size_t count;
+public:
+	_array(){
+		for (size_t i = 0; i < count; i++)
+			element[i] = NULL;
+		count = 0;
+	}
+	void add(T value);
+	void print_all();
+	void clean();
+	
+};
+
+template <class T>
+void _array<T>::add(T value){
+	if (count == SIZE) {
+		cout << "Overflow" << endl;
+		return;
+	}
+	element[count] = value;
+	count++;
+}
+
+template <class T>
+void _array<T>::print_all(){
+	cout << "Print all" << endl;
+}
+
+template <class T>
+void _array<T>::clean(){
+	for (size_t i = 0; i < count; i++)
+		element[i] = NULL;
+	count = 0;
+}
+#pragma endregion
 
 
 int main(){
 	computer my_pc("PC", 128, "VGA", 256, 512, 512, 86, 2000, 1024);
 	my_pc.show_properties();
+	cout << endl;
 	
 	List mylist;
+	_array<int> myarray;
 	
 
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 10; i++){
 		mylist.appendNode(i);
+		myarray.add(i);
+	}
+
 
 	mylist.print_all();
 	mylist.clean();
 	mylist.print_all();
 
+	cout << endl;
 
+	myarray.print_all();
+	myarray.clean();
+	myarray.print_all();
 
 
 	return 0;
