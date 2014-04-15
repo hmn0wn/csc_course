@@ -1,13 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
+#include <fstream>
 #include <iostream>
 #include <string.h>
 using namespace std;
 
 class comp_component{
 public:
-	virtual void show_properties() = 0;
+	virtual ostream &show_properties(ostream &stream) = 0;
 };
 
 class computer_screen : public comp_component{
@@ -19,7 +20,7 @@ public:
 		y_resolution = 0;
 	}
 	computer_screen(char *, long, int, int);
-	void show_properties(void);
+	ostream &show_properties(ostream &stream);
 
 private:
 	char type[32];
@@ -35,10 +36,11 @@ computer_screen::computer_screen(char *type, long colors, int x_res, int y_res){
 	computer_screen::y_resolution = y_res;
 }
 
-void computer_screen::show_properties(void){
-	cout << "Type of screen:\t" << type << endl;
-	cout << "Colors:\t" << colors << endl;
-	cout << "Resolution:\t" << x_resolution << " x " << y_resolution << endl;
+ostream &computer_screen::show_properties(ostream &stream){
+	stream << "Type of screen:\t" << type << endl;
+	stream << "Colors:\t" << colors << endl;
+	stream << "Resolution:\t" << x_resolution << " x " << y_resolution << endl;
+	return stream;
 }
 
 class mother_board : public comp_component{
@@ -49,7 +51,7 @@ public:
 		RAM = 0;
 	}
 	mother_board(int, int, int);
-	void show_properties(void);
+	ostream &show_properties(ostream &stream);
 
 private:
 	int processor;
@@ -63,10 +65,11 @@ mother_board::mother_board(int processor, int speed, int ram){
 	mother_board::RAM = ram;
 }
 
-void mother_board::show_properties(void){
-	cout << "Processor:\t" << processor << endl;
-	cout << "Speed:\t" << speed << " Mz" << endl;
-	cout << "RAM:\t" << RAM << " Mb" << endl;
+ostream & mother_board::show_properties(ostream &stream){
+	stream << "Processor:\t" << processor << endl;
+	stream << "Speed:\t" << speed << " Mz" << endl;
+	stream << "RAM:\t" << RAM << " Mb" << endl;
+	return stream;
 }
 
 class computer : public computer_screen, public mother_board{
@@ -74,7 +77,7 @@ class computer : public computer_screen, public mother_board{
 public:
 	computer();
 	computer(int, char *, long, int, int, int, int, int);
-	void show_properties(void);
+	ostream &show_properties(ostream &stream);
 
 private:
 	int hard_disc;	
@@ -89,17 +92,18 @@ computer_screen(screen_type, colors, x_res, y_res), mother_board(processor, spee
 	
 }
 
-void computer::show_properties(void){
-	computer_screen::show_properties();
-	mother_board::show_properties ();
-	cout << "Hard drive:\t" << hard_disc << endl;
+ostream &computer::show_properties(ostream &stream){
+	computer_screen::show_properties(stream);
+	mother_board::show_properties(stream);
+	stream << "Hard drive:\t" << hard_disc << endl;
+	return stream;
 }
 
 class pc :public computer{
 
 public:
 	pc(int, int, char *, long, int, int, int, int, int);
-	void show_properties(void);
+	ostream &show_properties(ostream &stream);
 private:
 	int mouse_dpi;
 };
@@ -109,16 +113,17 @@ computer(hard_disc, screen_type, colors, x_res, y_res, processor, speed, ram){
 pc:mouse_dpi = m_dpi;
 }
 
-void pc::show_properties(void){
-	computer::show_properties();
-	cout << "Mouse dpi:\t" << mouse_dpi << endl;
+ostream & pc::show_properties(ostream &stream){
+	computer::show_properties(stream);
+	stream << "Mouse dpi:\t" << mouse_dpi << endl;
+	return stream;
 }
 
 class laptop :public computer{
 
 public:
 	laptop(bool, int, char *, long, int, int, int, int, int);
-	void show_properties(void);
+	ostream &show_properties(ostream &stream);
 private:
 	bool touchpad;
 };
@@ -128,9 +133,10 @@ computer(hard_disc, screen_type, colors, x_res, y_res, processor, speed, ram){
 	laptop:touchpad = tch;
 }
 
-void laptop::show_properties(void){
-	computer::show_properties();
-	cout << "Touchpad:\t" << ((touchpad) ? "yes" : "no") << endl;
+ostream & laptop::show_properties(ostream &stream){
+	computer::show_properties(stream);
+	stream << "Touchpad:\t" << ((touchpad) ? "yes" : "no") << endl;
+	return stream;
 }
 
 #pragma region List
@@ -257,7 +263,7 @@ class server : public computer, public _array <computer>{
 	
 public:
 	server(char *, int, char *, long, int, int, int, int, int);
-	void print_all();
+	ostream &print_all(ostream &stream);
 
 private:
 	char ip[16];
@@ -268,29 +274,89 @@ computer(hard_disc, screen_type, colors, x_res, y_res, processor, speed, ram)/*,
 	strcpy(server::ip, ip);
 }
 
-void server::print_all(){
-	for (size_t i = 0; i < getcount(); i++)
-		element[i].show_properties();
+ostream &server::print_all(ostream &stream){
+	for (size_t i = 0; i < getcount(); i++){
+		stream << "Comp[" << i + 1 << "]:" << endl;
+		element[i].show_properties(stream);
+		stream << endl;
+	}
+	
+	return stream;
+}
+
+ostream &operator<<(ostream &stream, server serv){
+	serv.print_all(stream);
+	return stream;
 }
 
 
+
 int main(){
-	computer my_pc(128, "VGA", 256, 512, 512, 86, 2000, 1024);
+	//computer my_pc(128, "VGA", 256, 512, 512, 86, 2000, 1024);
 	//my_pc.show_properties();
 	//cout << endl;
 
-	server my_server("128.0.0.1", 512, "DVI", 65324, 1920, 1080, 86, 4000, 8192);
-	my_server.show_properties();
-	my_server.add(my_pc);
+	//server my_server("128.0.0.1", 512, "DVI", 65324, 1920, 1080, 86, 4000, 8192);
+	//my_server.show_properties();
+	//my_server.add(my_pc);
 
-	cout << endl;
-	my_server.print_all();
+	//cout << endl;
+	//cout << my_server;
+	//my_server.print_all();
+
+
 	
 
+	char ip[65];
+	int hard_disc;
+	char screen_type[65];
+	long colors;
+	int x_res;
+	int y_res;
+	int processor;
+	int speed;
+	int ram;
+	int comp_count;
+
+	char comp_type[10];
+
+	int m_dpi;
+	bool tch;
 	
+	
+	
+	ifstream in("input.txt");
+	if (!in){
+		cout << "Can not open file." << endl;
+	}
+	else{
+		in >> ip >> hard_disc >> screen_type >> colors >> x_res >> y_res >> processor >> speed >> ram;
+		server serv(ip, hard_disc, screen_type, colors, x_res, y_res, processor, speed, ram);
+		
+		computer tmpcomp;
+		in >> comp_count;
+		for (int i = 0; i < comp_count; i++){
+			in >> comp_type;
+			if (!strcmp(comp_type, "pc")){
+				in >> m_dpi >> hard_disc >> screen_type >> colors >> x_res >> y_res >> processor >> speed >> ram;
+				tmpcomp = *(new pc(m_dpi, hard_disc, screen_type, colors, x_res, y_res, processor, speed, ram));
+				serv.add(tmpcomp);
+			}
+			if (!strcmp(comp_type, "laptop")){
+				in >> tch >> hard_disc >> screen_type >> colors >> x_res >> y_res >> processor >> speed >> ram;
+				tmpcomp = *(new laptop(tch, hard_disc, screen_type, colors, x_res, y_res, processor, speed, ram));
+				serv.add(tmpcomp);
+			}
+
+		}
+		cout << "Server: " << endl;
+		serv.show_properties(cout);
+
+		cout << endl << serv;
+	}
+
+	in.close();
 
 	
-
-
 	return 0;
 }
