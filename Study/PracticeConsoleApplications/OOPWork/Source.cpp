@@ -5,10 +5,15 @@
 #include <string.h>
 using namespace std;
 
-class computer_screen{
+class comp_component{
+public:
+	virtual void show_properties() = 0;
+};
+
+class computer_screen : public comp_component{
 public:
 	computer_screen(char *, long, int, int);
-	void show_screen(void);
+	void show_properties(void);
 
 private:
 	char type[32];
@@ -24,16 +29,16 @@ computer_screen::computer_screen(char *type, long colors, int x_res, int y_res){
 	computer_screen::y_resolution = y_res;
 }
 
-void computer_screen::show_screen(void){
+void computer_screen::show_properties(void){
 	cout << "Type of screen:\t" << type << endl;
 	cout << "Colors:\t" << colors << endl;
 	cout << "Resolution:\t" << x_resolution << " x " << y_resolution << endl;
 }
 
-class mother_board{
+class mother_board : public comp_component{
 public:
 	mother_board(int, int, int);
-	void show_mother_board(void);
+	void show_properties(void);
 
 private:
 	int processor;
@@ -47,7 +52,7 @@ mother_board::mother_board(int processor, int speed, int ram){
 	mother_board::RAM = ram;
 }
 
-void mother_board::show_mother_board(void){
+void mother_board::show_properties(void){
 	cout << "Processor:\t" << processor << endl;
 	cout << "Speed:\t" << speed << " Mz" << endl;
 	cout << "RAM:\t" << RAM << " Mb" << endl;
@@ -57,7 +62,7 @@ class computer : public computer_screen, public mother_board{
 
 public:
 	computer(char *, int, char *, long, int, int, int, int, int);
-	void show_computer(void);
+	void show_properties(void);
 
 private:
 	char name[64];
@@ -72,11 +77,11 @@ computer_screen(screen_type, colors, x_res, y_res), mother_board(processor, spee
 	
 }
 
-void computer::show_computer(void){
+void computer::show_properties(void){
 	cout << "Type of computer:\t" << name << endl;
 	cout << "Hard drive:\t" << hard_disc << endl;
-	show_mother_board();
-	show_screen();
+	computer_screen::show_properties();
+	mother_board::show_properties ();
 }
 
 
@@ -84,7 +89,7 @@ void computer::show_computer(void){
 
 int main(){
 	computer my_pc("PC", 128, "VGA", 256, 512, 512, 86, 2000, 1024);
-	my_pc.show_computer();
+	my_pc.show_properties();
 
 	return 0;
 }
