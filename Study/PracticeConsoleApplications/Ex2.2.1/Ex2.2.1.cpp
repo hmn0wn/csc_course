@@ -12,7 +12,7 @@ void strinvert(char *x);
 char *add(char *x, char *y);
 char *diff(char *x, char *y);
 char *simplexy(char x, char y);
-char *rshift(char *x, size_t n);
+char *lshift(char *x, size_t n);
 char *inttostr(size_t x);
 
 
@@ -49,11 +49,6 @@ char *add(char *x, char *y){
 		M -= N;
 	}
 
-	strinvert(x);
-	strinvert(y);
-	//z[0] = '0';
-
-
 	for (size_t i = 0; i < M; i++){
 		z[i + 1] = (z[i]+ x[i] + y[i] - 2 * '0') / 10;
 		z[i] = (z[i] + x[i] + y[i] - 2 * '0') % 10 + '0';
@@ -73,10 +68,6 @@ char *add(char *x, char *y){
 
 	if (z[N]) z[N] += '0';
 	
-	strinvert(x);
-	strinvert(y);
-	strinvert(z);
-
 	return z;
 }
 
@@ -93,10 +84,6 @@ char *diff(char *x, char *y){															//Первое число априори больше второг
 		return z;
 	}
 
-
-	strinvert(x);
-	strinvert(y);
-
 	bool credit = 0;
 	for (size_t i = 0; i < M; i++){
 		if (x[i] - credit >= y[i]){
@@ -110,7 +97,6 @@ char *diff(char *x, char *y){															//Первое число априори больше второг
 		}
 	}
 
-	//if(M<N) z[M] = x[M] - credit;
 	for (size_t i = M; i < N; i++){
 		if (x[i] - credit >= '0'){
 			z[i] = x[i] - credit;
@@ -126,12 +112,6 @@ char *diff(char *x, char *y){															//Первое число априори больше второг
 	while (i>0 && (z[i] == '0' || z[i] == 0))
 		z[i--] = 0;
 
-	strinvert(x);
-	strinvert(y);
-	strinvert(z);
-
-	//free(x);
-	//free(y);
 	return z;
 }
 
@@ -142,8 +122,8 @@ char *simplexy(char x, char y){
 	size_t z_ = (x - '0')*(y - '0');
 	if (z_>= 10){
 		z = (char *)malloc(3);
-		z[1] = z_ % 10 + '0';
-		z[0] = z_ / 10 + '0';
+		z[0] = z_ % 10 + '0';
+		z[1] = z_ / 10 + '0';
 		z[2] = 0;
 	}
 	else {
@@ -164,25 +144,6 @@ char *karatsuba(char *x, char *y){
 
 	char *tmp, *tmp1, *tmp2; //Для отчистки памяти.
 	
-
-	//А вот теперь возьмем, и дополним меньшее число нулями слева, до большего, до совпадения длины.
-	/*if (N > M){
-		strinvert(y);
-		tmp = rshift(y, N - M);
-		free(x);
-		x = tmp;
-		strinvert(y);
-		M = N;
-	}
-	else if(N<M){
-		strinvert(x);
-		tmp = rshift(x,M - N);
-		free(x);
-		x = tmp;
-		strinvert(x);
-		N = M;
-	}*/
-	
 	if (L == 1) return simplexy(x[0], y[0]);
 
 	//Укорачиваем дерево, производя умножение на ноль сразу.
@@ -192,47 +153,45 @@ char *karatsuba(char *x, char *y){
 		z[1] = 0;
 		return z;
 	}
-	
+
 	size_t xln = (N > n_) ? N-n_ : 0;	//Индивидуальная длина левоко куска, если числа сильно разнятся по длине.
-	//size_t xln = N - n_;				//Старый вариант.
 	char *xl = (char *)malloc(xln+1);
-	xl = strncpy(xl, x, xln);//
+	for (size_t i = N - xln; i<N; i++)
+		xl[i - N + xln] = x[i];
 	xl[xln] = 0;
 
 	size_t xrn = (N > n_) ? n_ : N;
-	//size_t xrn = n_;
 	char *xr = (char *)malloc(xrn + 1);
+	for (size_t i = 0; i<xrn; i++)
+		xr[i] = x[i];
 	xr[xrn] = 0;
-	for (size_t i = N - xrn; i < N; i++)
-		xr[i + xrn - N] = x[i];
-
+	
 	
 	size_t yln = (M > n_) ? M - n_ : 0;
-	//size_t yln = M - n_;
 	char *yl = (char *)malloc(yln + 1);
-	yl = strncpy(yl, y, yln);
+	for (size_t i = M - yln; i<M; i++)
+		yl[i - M + yln] = y[i];
 	yl[yln] = 0;
 
 	size_t yrn = (M > n_) ? n_ : M;
-	//size_t yrn = n_;
 	char *yr = (char *)malloc(yrn + 1);
+	for (size_t i = 0; i < yrn; i++)
+		yr[i] = y[i];
 	yr[yrn] = 0;
-	for (size_t i = M - yrn; i < M; i++)
-		yr[i + yrn - M] = y[i];
-
 	
 
-	char *p1 = (char *)malloc(n_ * 2 + 2);
-	p1 = (char *)memset(p1, 0, n_ * 2 + 2);
+
+	char *p1 = (char *)malloc(xln + yln + 2);
+	p1 = (char *)memset(p1, 0, xln + yln + 2);
 	p1 = karatsuba(xl, yl);
 
-	char *p2 = (char *)malloc(n_ * 2 + 2);
-	p2 = (char *)memset(p2, 0, n_ * 2 + 2);
+	char *p2 = (char *)malloc(xrn + yln + 2);
+	p2 = (char *)memset(p2, 0, xrn + yln + 2);
 	p2 = karatsuba(xr, yr);
 	
-
-	char *p3 = (char *)malloc(n_ * 2 + 2);
-	p3 = (char *)memset(p3, 0, n_ * 2 + 2);
+	size_t p3n = (xln > xrn ? xln : xrn) + (yln > yrn ? yln : yrn) + 3;
+	char *p3 = (char *)malloc(p3n); //Максимально возможная длина, очевидно же.
+	p3 = (char *)memset(p3, 0, p3n);
 	tmp = add(xl, xr);
 	free(xl);
 	free(xr);
@@ -248,16 +207,14 @@ char *karatsuba(char *x, char *y){
 
 	
 
-	//z = add(add(rshift(p1, 2 * n_), rshift(diff(diff(p3,p1),p2),n_)), p2);
-
 	tmp = diff(p3, p1);
 	tmp1 = diff(tmp, p2);
 	free(tmp);
 
-	tmp = rshift(tmp1, n_);
+	tmp = lshift(tmp1, n_);
 	free(tmp1);
 
-	tmp1 = rshift(p1, 2 * n_);
+	tmp1 = lshift(p1, 2 * n_);
 	tmp2 = add(tmp1, tmp);
 	free(tmp);
 	free(tmp1);
@@ -278,17 +235,12 @@ char *karatsuba(char *x, char *y){
 }
 
 //Рассово верное умножение на основание системы счисления, сдвигом.
-char *rshift(char *x, size_t n){
+char *lshift(char *x, size_t n){
 	size_t N = strlen(x);
-	strinvert(x);
 	char *y = (char *)malloc(N + n + 1);
 	y = (char *)memset(y, '0', N + n + 1);
 	for (size_t i = 0; i <= N; i++)
 		y[i + n] = x[i];
-
-
-//	free(x);
-	strinvert(y);
 	return y;
 }
 
@@ -301,7 +253,6 @@ char *inttostr(size_t x){
 		x = x / 10;
 		i++;
 	}
-	strinvert(y);
 	return y;
 }
 
@@ -328,16 +279,18 @@ size_t main()
 #pragma endregion	
 
 #pragma region Целевое действие.
-	//size_t N = 10000;
-	//char *x = (char *)malloc(N + 1);
-	//x = (char *)memset(x, '9', N);
-	//x[N] = 0;
-	//char *y = (char *)malloc(N + 1);
-	//y = (char *)memset(y, '9', N);
-	//y[N] = 0;
-	//
-	//char *z = karatsuba(x, y);
-	//printf("%s\n", z);
+	size_t N = 10000;
+	char *x = (char *)malloc(N + 1);
+	x = (char *)memset(x, '1', N);
+	x[N] = 0;
+	char *y = (char *)malloc(N + 1);
+	y = (char *)memset(y, '1', N);
+	y[N] = 0;
+	
+	
+	char *z = karatsuba(x, y);
+	strinvert(z);
+	printf("%s\n", z);
 #pragma endregion
 
 	//Тестирование суммы, разности, инверсии и сдвига входных данных.
@@ -386,11 +339,12 @@ size_t main()
 	}*/
 
 	//Тестирование суммы и произведения перебором.
-	size_t z,z_;
+	/*size_t z,z_;
 	char *sz, *si, *sj;
-	for (size_t i = 0; i < 1000; i++){
-		for (size_t j = 0; j < 1000; j++){
+	for (size_t i = 2; i < 1000; i++){
+		for (size_t j = 14; j < 1000; j++){
 			sz = (karatsuba(inttostr(i),inttostr(j)));
+			strinvert(sz);
 			z = atoi(sz);
 			z_ = i*j;
 			if(z!=z_)
@@ -399,7 +353,7 @@ size_t main()
 			
 		}
 	}
-	
+	*/
 	
 	//Тестирование правого сдвига перебором.
 	/*char *s;
