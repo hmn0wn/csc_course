@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex2.2.1(Karatsuba)", "Ex2.2.1(Karatsuba)\Ex2.2.1(Karatsuba).vcxproj", "{CDC5FF26-45EA-4483-8BAA-68947876090D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OOPWork", "OOPWork\OOPWork.vcxproj", "{7F421EFC-2524-41FE-BFAA-46FCCEFEDCC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -47,6 +49,10 @@ Global
 		{CDC5FF26-45EA-4483-8BAA-68947876090D}.Debug|Win32.Build.0 = Debug|Win32
 		{CDC5FF26-45EA-4483-8BAA-68947876090D}.Release|Win32.ActiveCfg = Release|Win32
 		{CDC5FF26-45EA-4483-8BAA-68947876090D}.Release|Win32.Build.0 = Release|Win32
+		{7F421EFC-2524-41FE-BFAA-46FCCEFEDCC1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7F421EFC-2524-41FE-BFAA-46FCCEFEDCC1}.Debug|Win32.Build.0 = Debug|Win32
+		{7F421EFC-2524-41FE-BFAA-46FCCEFEDCC1}.Release|Win32.ActiveCfg = Release|Win32
+		{7F421EFC-2524-41FE-BFAA-46FCCEFEDCC1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
