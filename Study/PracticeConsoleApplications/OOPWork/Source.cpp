@@ -85,58 +85,91 @@ void computer::show_properties(void){
 }
 
 
+class List{
+	
+public:
+	List();
+	~List();
+	void appendNode(int value);
+	void print_all();
+	void clean();
+	size_t getcount();
 
-struct ListNode{
-	int data;
-	ListNode *next;
+private:
+	struct ListNode {
+		int data;
+		ListNode *next;
+		ListNode(int value, ListNode *n) : data(value), next(n) {}
+	};
+	ListNode *first;
+	size_t count;
+
 };
 
-ListNode *appendNode(ListNode *head, int data){
-	if (head == NULL){
-		head = new ListNode;
-		head->data = data;
-		head->next = NULL;
-	}
-	else{
-		head->next = appendNode(head->next, data);
-	}
-	return head;
+List::List() : count(0), first(NULL){
+}
+List::~List(){
+	clean();
 }
 
-void cleanList(ListNode **head){
-	ListNode *iter = *head;
-	while (*head!= NULL){
-		iter = (*head)->next;
-		delete(*head);
-		*head = iter;
+//Добавление записи в конец списка.
+void List::appendNode(int value){
+	if (first == NULL){
+		first = new ListNode(value, NULL);
+		return;
 	}
-	*head = NULL;
+	ListNode *tmp = first;
+	while (tmp->next != NULL)
+		tmp = tmp->next;
+	
+	tmp-> next = new ListNode(value, NULL);
+	count++;
+	 
 }
+
+void List::print_all(){
+	ListNode *tmp;
+	tmp = first;
+	size_t i = 1;
+	while (tmp != NULL){
+		cout << "List[" << i++ << "]: " << tmp->data << endl;
+		tmp = tmp->next;
+	}
+	
+}
+
+void List::clean(){
+	ListNode *tmp = first;
+	while (first != NULL){
+		tmp = first->next;
+		delete(first);
+		first = tmp;
+	}
+	count = 0;
+}
+
+size_t List::getcount(){
+	return count;
+}
+
 
 
 int main(){
 	computer my_pc("PC", 128, "VGA", 256, 512, 512, 86, 2000, 1024);
 	my_pc.show_properties();
+	
+	List mylist;
+	
 
-	ListNode *ln = NULL;//Важно обнулить.
 	for (size_t i = 0; i < 10; i++)
-		ln = appendNode(ln, i);
+		mylist.appendNode(i);
 
-	ListNode *ln_;
-	ln_ = ln;
-	size_t i = 1;
-	while (ln_ != NULL){
-		cout << "ln_[" << i++ << "]: " << ln_->data << endl;
-		ln_ = ln_->next;
-	}
+	mylist.print_all();
+	mylist.clean();
+	mylist.print_all();
 
-	cleanList(&ln);
-	ln_ = ln;
-	i = 1;
-	while (ln_ != NULL){
-		cout << "ln_[" << i++ << "]: " << ln_->data << endl;
-		ln_ = ln_->next;
-	}
+
+
 
 	return 0;
 }
