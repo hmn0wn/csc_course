@@ -86,10 +86,57 @@ void computer::show_properties(void){
 
 
 
+struct ListNode{
+	int data;
+	ListNode *next;
+};
+
+ListNode *appendNode(ListNode *head, int data){
+	if (head == NULL){
+		head = new ListNode;
+		head->data = data;
+		head->next = NULL;
+	}
+	else{
+		head->next = appendNode(head->next, data);
+	}
+	return head;
+}
+
+void cleanList(ListNode **head){
+	ListNode *iter = *head;
+	while (*head!= NULL){
+		iter = (*head)->next;
+		delete(*head);
+		*head = iter;
+	}
+	*head = NULL;
+}
+
 
 int main(){
 	computer my_pc("PC", 128, "VGA", 256, 512, 512, 86, 2000, 1024);
 	my_pc.show_properties();
+
+	ListNode *ln = NULL;//Важно обнулить.
+	for (size_t i = 0; i < 10; i++)
+		ln = appendNode(ln, i);
+
+	ListNode *ln_;
+	ln_ = ln;
+	size_t i = 1;
+	while (ln_ != NULL){
+		cout << "ln_[" << i++ << "]: " << ln_->data << endl;
+		ln_ = ln_->next;
+	}
+
+	cleanList(&ln);
+	ln_ = ln;
+	i = 1;
+	while (ln_ != NULL){
+		cout << "ln_[" << i++ << "]: " << ln_->data << endl;
+		ln_ = ln_->next;
+	}
 
 	return 0;
 }
