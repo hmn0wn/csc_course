@@ -44,29 +44,36 @@ void mergeSort(size_t *p, size_t n, size_t *tmp){
 
 int main(){
 
-	ifstream in;
-	in.open("input.txt", ios::in);
+	//ifstream in;
+	//in.open("input.txt", ios::in);
 	
 
-	ofstream out("output.txt");
+	//ofstream out("output.txt");
 		
 	size_t const SIZE = 100000;
 	size_t N;
-	in >> N;
+	cin >> N;
 	int A[SIZE], tmp[SIZE];
 
 	for (size_t i = 0; i < N; i++)
-		in >> A[i];
+		cin >> A[i];
 	
 	mergeSort((size_t *)A, N, (size_t *)tmp);
 
-	for (size_t i = 0; i < N; i++)
-		out << A[i] << endl;
+	/*for (size_t i = 0; i < N; i++)
+		out << A[i] << endl;*/
 
 	
+	if (N%2)
+	if (A[N / 2 - 1] == A[N / 2] || A[N / 2] == A[N / 2 - 1]) cout << "true";
+	else cout << "false";
+	else
+	if (A[N / 2 - 1] == A[N / 2]) cout << "true";
+	else cout << "false";
 
-	in.close();
-	out.close();
+
+	//in.close();
+	//out.close();
 	
 
 	return 0;
