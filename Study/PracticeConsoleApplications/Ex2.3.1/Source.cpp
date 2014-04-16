@@ -4,7 +4,7 @@
 #include <fstream>
 using namespace std;
 
-void mergeSort(size_t *p, size_t n, size_t *tmp){
+void mergeSort(int *p, size_t n, int *tmp){
 
 	if (n == 1) return; //Попробуем сначала так, а после убрав следующий блок.
 
@@ -44,36 +44,43 @@ void mergeSort(size_t *p, size_t n, size_t *tmp){
 
 int main(){
 
-	//ifstream in;
-	//in.open("input.txt", ios::in);
-	
-
-	//ofstream out("output.txt");
+	ifstream in;
+	in.open("input.txt", ios::in);
+	ofstream out("output.txt");
 		
 	size_t const SIZE = 100000;
-	size_t N;
-	cin >> N;
+	size_t N, i, K;
 	int A[SIZE], tmp[SIZE];
 
-	for (size_t i = 0; i < N; i++)
-		cin >> A[i];
-	
-	mergeSort((size_t *)A, N, (size_t *)tmp);
+	while (!in.eof()){
 
-	/*for (size_t i = 0; i < N; i++)
-		out << A[i] << endl;*/
+		in >> N;
+		for (size_t i = 0; i < N; i++)
+			in >> A[i];
 
-	
-	if (N%2)
-	if (A[N / 2 - 1] == A[N / 2] || A[N / 2] == A[N / 2 - 1]) cout << "true";
-	else cout << "false";
-	else
-	if (A[N / 2 - 1] == A[N / 2]) cout << "true";
-	else cout << "false";
+		mergeSort((int *)A, N, (int *)tmp);
 
 
-	//in.close();
-	//out.close();
+
+		i = N / 2, K = 1;
+		while (i>0 && A[i - 1] == A[i--]) K++;
+		i = N / 2;
+		while (i < N - 1 && A[i++] == A[i + 1]) K++;
+
+
+		out << "A : ";
+		for (size_t i = 0; i < N; i++)
+			out << A[i] << " ";
+
+		out << endl << "K = " << K << endl;;
+
+		if (K>N / 2) out << "True";
+		else out << "False";
+		out << endl;
+	}
+
+	in.close();
+	out.close();
 	
 
 	return 0;
