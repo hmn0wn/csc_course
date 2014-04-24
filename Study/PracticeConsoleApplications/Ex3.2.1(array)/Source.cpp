@@ -23,6 +23,7 @@ public:
 	void inserttail(size_t d);//
 	void del(size_t i);
 	void printheap();
+	size_t getlength();
 
 	size_t data(size_t i);//
 	size_t parent(size_t i);//
@@ -54,7 +55,7 @@ size_t Heap::rightc(size_t i){
 }
 
 
-void Heap::inserthead(size_t d){
+void Heap::inserthead(size_t d){//зачем Я это написал Оо, нельзя добавлять в голову, это все ломает.
 	
 	for (size_t i = length+1; i > 0; i--)
 		heap[i] = heap[i - 1];
@@ -100,8 +101,8 @@ void Heap::siftdown(size_t i){
 }
 
 void Heap::insert(size_t d){
-	inserthead(d);
-	siftdown(1);
+	inserttail(d);
+	siftup(length);
 }
 
 size_t Heap::extract(){
@@ -120,26 +121,34 @@ void Heap::printheap(){
 	cout << "]" << endl;
 }
 
-
-size_t main(){
-	ifstream in("input.txt");
-	fstream out("output.txt");
-	Heap myheap;
-	size_t n, input;
-	char flag[10];
-	in >> n;
-	for (size_t i = 0; i < n; i++){
-		
-		in >> flag;
-		if (!strcmp(flag, "Insert")){
-			in >> input; 
-			myheap.insert(input);
-		}
-		else cout << myheap.extract() << endl;
+size_t Heap::getlength(){
+	return length;
 }
 
 
+int main(){
+	//ifstream in("input.txt");
+	//fstream out("output.txt");
+	Heap myheap;
+	size_t n, input;
+	char flag[10];
+	cin >> n;
+	for (size_t i = 0; i < n; i++){
+		
+		cin >> flag;
+		if (!strcmp(flag, "Insert")){
+			cin >> input; 
+			myheap.insert(input);
+		}
+		else cout << myheap.extract() << endl;
+	}
+	
 
+	/*for (size_t i = 0; i < 100; i++)
+		myheap.insert(rand()%100 + 1);
+
+	for (size_t i = 0; i < myheap.getlength(); i++)
+		cout << myheap.extract() << endl;*/
 	
 	
 	return 0;
