@@ -6,17 +6,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <iostream>
 
-char *strinvert(char *x){
-	int L = strlen(x);														//Длинна без нулевого символа.
-	char *y = (char *)malloc(L + 1);												//Добавляеме разряд для нулевого символа.
-	y = (char *)memset(y, 0, L + 1);
-	for (int i = 0; i < L; i++)														//Пишу без хаков с адресной арифметикой, так как плохо ей владею.
-		y[L - i - 1] = x[i];														//Вычитание единицы, как поправка на начало массива с нуля.
+using namespace std;
 
-	free(x);
-	return y;
-}
+//char *strinvert(char *x){
+//	int L = strlen(x);														//Длинна без нулевого символа.
+//	char *y = (char *)malloc(L + 1);												//Добавляеме разряд для нулевого символа.
+//	y = (char *)memset(y, 0, L + 1);
+//	for (int i = 0; i < L; i++)														//Пишу без хаков с адресной арифметикой, так как плохо ей владею.
+//		y[L - i - 1] = x[i];														//Вычитание единицы, как поправка на начало массива с нуля.
+//
+//	free(x);
+//	return y;
+//}
 
 //void invert(char *str){
 //	int n = strlen(str);
@@ -28,6 +31,16 @@ char *strinvert(char *x){
 //	}
 //	
 //}
+
+long long log_factorial(long long n){
+	long long s = 0;
+	for (long long i = 1; i < n; i++)
+		s += (log10(i)) / log10(2);
+	return s;
+}
+long long factorial(long long n){
+	return n>1 ? n*factorial(n - 1) : 1;
+}
 
 int main(){
 
@@ -101,9 +114,18 @@ int main(){
 
 	//printf("len of epmty = %i\n", strlen(""));
 
-	char *buf = (char *)malloc(10);
+	/*char *buf = (char *)malloc(10);
 	char str[5] = "Hell";
 
-	buf = strncpy(buf, str, strlen(str));
+	buf = strncpy(buf, str, strlen(str));*/
 	
+	
+	
+
+	long long n = 100, a = 1, b =1;
+	for (long long i = 2; i < n; i += 1){
+		a = powl(i, i);
+		b = powl(2, powl(2,i));
+		cout << "i: " << i << "\t" << a << "\t"<< b << "\t" << a/b << "\t" << endl;
+	}
 }

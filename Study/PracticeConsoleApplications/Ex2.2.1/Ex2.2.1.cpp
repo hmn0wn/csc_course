@@ -279,7 +279,7 @@ size_t main()
 #pragma endregion	
 
 #pragma region Целевое действие.
-	size_t N = 10000;
+	size_t N = 1000;
 	char *x = (char *)malloc(N + 1);
 	x = (char *)memset(x, '1', N);
 	x[N] = 0;
