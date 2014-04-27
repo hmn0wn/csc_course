@@ -1,7 +1,10 @@
+
+//Задача одолела контест, но контейнер еще требует множества доработок.
 #include <iostream>
 #include <fstream>
 #include <string.h>
 #define SIZE 100000
+
 using namespace std;
 
 
