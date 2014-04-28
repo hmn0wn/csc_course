@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex3.2.1(tree)", "Ex3.2.1\Ex
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex3.2.1(array)", "Ex3.2.1(array)\Ex3.2.1(array).vcxproj", "{23BFACFE-0B05-4CFE-A1D5-0A413A69F8E7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex3.3.1(Segment tree)", "Ex3.3.1(Segment tree)\Ex3.3.1(Segment tree).vcxproj", "{09F22182-794E-4C70-9B99-D58FA0B1DA91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -77,6 +79,10 @@ Global
 		{23BFACFE-0B05-4CFE-A1D5-0A413A69F8E7}.Debug|Win32.Build.0 = Debug|Win32
 		{23BFACFE-0B05-4CFE-A1D5-0A413A69F8E7}.Release|Win32.ActiveCfg = Release|Win32
 		{23BFACFE-0B05-4CFE-A1D5-0A413A69F8E7}.Release|Win32.Build.0 = Release|Win32
+		{09F22182-794E-4C70-9B99-D58FA0B1DA91}.Debug|Win32.ActiveCfg = Debug|Win32
+		{09F22182-794E-4C70-9B99-D58FA0B1DA91}.Debug|Win32.Build.0 = Debug|Win32
+		{09F22182-794E-4C70-9B99-D58FA0B1DA91}.Release|Win32.ActiveCfg = Release|Win32
+		{09F22182-794E-4C70-9B99-D58FA0B1DA91}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +96,6 @@ Global
 		{67102FD0-1CD8-4DE4-B0F9-8B01000D542F} = {9A03099B-B821-4692-B572-BA2FE9182785}
 		{9CCB7A7F-2905-4366-920E-C541704C04C7} = {9A03099B-B821-4692-B572-BA2FE9182785}
 		{23BFACFE-0B05-4CFE-A1D5-0A413A69F8E7} = {9A03099B-B821-4692-B572-BA2FE9182785}
+		{09F22182-794E-4C70-9B99-D58FA0B1DA91} = {9A03099B-B821-4692-B572-BA2FE9182785}
 	EndGlobalSection
 EndGlobal
