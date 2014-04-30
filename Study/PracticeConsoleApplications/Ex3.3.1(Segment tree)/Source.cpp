@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string.h>
 #include <math.h>
 // Оценим сверху степенью двойки
 #define SIZE 131072
@@ -9,8 +10,8 @@ using namespace std;
 
 class segment_tree{
 private:
-	int *base_array = new int[SIZE];	
-	int *tree_array = new int[2*SIZE-1];
+	int *base_array = new int[131072];	
+	int *tree_array = new int[2 * 131072 - 1];
 
 public:
 	size_t length_base_array;
@@ -57,7 +58,7 @@ void segment_tree::buildtree(){
 	
 	//Заполняем доп. ячейки максимальным зничением int.
 	for (size_t i = length_base_array; i < new_length_base_array; i++)
-		base_array[i] = INT_MAX;
+		base_array[i] = 2147483647;
 
 	length_base_array = new_length_base_array;
 
@@ -104,7 +105,7 @@ int segment_tree::Min(size_t L, size_t R){
 	}
 	
 	
-	int MIN = INT_MAX;
+	int MIN = 2147483647;
 	//Хаха, костыль, если отрезок из двух чисел и делить его уже не удается, то фигачим тупое сравнение.
 	//if (length == 2 && (L != pow2_L || R != pow2_R)) return base_array[L + 1] < base_array[R + 1] ? base_array[L + 1] : base_array[R + 1];
 	
@@ -188,7 +189,7 @@ ostream &operator<<(ostream &stream, segment_tree s_tree){
 
 
 int main(){
-	int *b_array = new int[SIZE];
+	int *b_array = new int[131072];
 	size_t n, m;
 	/*ifstream in("input.txt");
 	in >> n >> m;
@@ -212,8 +213,11 @@ int main(){
 		cin >> b_array[i];
 
 	segment_tree s_tree(b_array, n);
+	
 	size_t I,L,R;
 	int X;
+	int *answers = new int[100000];
+	size_t iter = 0;
 	char command[4];
 	for (size_t i = 0; i < m; i++){
 		cin >> command;
@@ -225,9 +229,11 @@ int main(){
 		else{
 			cin >> L;
 			cin >> R;
-			cout << s_tree.Min(L, R);
+			answers[iter++] = s_tree.Min(L, R);
 		}
 	}
 
+	for (size_t i = 0; i < iter; i++)
+		cout << answers[i] << endl;
 	
 }
