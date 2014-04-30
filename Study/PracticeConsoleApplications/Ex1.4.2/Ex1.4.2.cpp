@@ -1,4 +1,4 @@
-// Ex1.4.2.cpp : Defines the entry point for the console application.
+п»ї// Ex1.4.2.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
@@ -40,4 +40,4 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
-//массивы должны начинаться с 0, и время работы необходимо уменьшить.
+//РјР°СЃСЃРёРІС‹ РґРѕР»Р¶РЅС‹ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ 0, Рё РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹ РЅРµРѕР±С…РѕРґРёРјРѕ СѓРјРµРЅСЊС€РёС‚СЊ.

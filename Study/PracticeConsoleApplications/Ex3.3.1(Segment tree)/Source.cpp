@@ -1,8 +1,8 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <fstream>
 #include <string.h>
 #include <math.h>
-// Оценим сверху степенью двойки
+// РћС†РµРЅРёРј СЃРІРµСЂС…Сѓ СЃС‚РµРїРµРЅСЊСЋ РґРІРѕР№РєРё
 #define SIZE 131072
 
 using namespace std;
@@ -27,7 +27,7 @@ public:
 	int Min_of_tree_segment(size_t L, size_t R);
 	void Set(size_t I, int X);
 
-	//Нормализуем, приводим к правильному виду, дерево начиная с положения I согласно абсолютной нумерации дерева, и заканчивая положением 1.
+	//РќРѕСЂРјР°Р»РёР·СѓРµРј, РїСЂРёРІРѕРґРёРј Рє РїСЂР°РІРёР»СЊРЅРѕРјСѓ РІРёРґСѓ, РґРµСЂРµРІРѕ РЅР°С‡РёРЅР°СЏ СЃ РїРѕР»РѕР¶РµРЅРёСЏ I СЃРѕРіР»Р°СЃРЅРѕ Р°Р±СЃРѕР»СЋС‚РЅРѕР№ РЅСѓРјРµСЂР°С†РёРё РґРµСЂРµРІР°, Рё Р·Р°РєР°РЅС‡РёРІР°СЏ РїРѕР»РѕР¶РµРЅРёРµРј 1.
 	void normalize(size_t I);//
 	size_t pows_t(size_t x, size_t y);
 
@@ -46,7 +46,7 @@ segment_tree::segment_tree(int *array_, size_t n){
 }
 
 void segment_tree::buildtree(){
-	//Приводим длину массива к степени двойки.
+	//РџСЂРёРІРѕРґРёРј РґР»РёРЅСѓ РјР°СЃСЃРёРІР° Рє СЃС‚РµРїРµРЅРё РґРІРѕР№РєРё.
 	log2_length_base_array = (size_t)log2(length_base_array);
 	size_t new_length_base_array = pows_t(2, log2_length_base_array);
 	
@@ -56,22 +56,22 @@ void segment_tree::buildtree(){
 		log2_length_base_array++;
 	}
 	
-	//Заполняем доп. ячейки максимальным зничением int.
+	//Р—Р°РїРѕР»РЅСЏРµРј РґРѕРї. СЏС‡РµР№РєРё РјР°РєСЃРёРјР°Р»СЊРЅС‹Рј Р·РЅРёС‡РµРЅРёРµРј int.
 	for (size_t i = length_base_array; i < new_length_base_array; i++)
 		base_array[i] = 2147483647;
 
 	length_base_array = new_length_base_array;
 
-	//Вычисляем длину массива-дерева(геометрическая прогрессия от степеней двойки в степени высоты).
+	//Р’С‹С‡РёСЃР»СЏРµРј РґР»РёРЅСѓ РјР°СЃСЃРёРІР°-РґРµСЂРµРІР°(РіРµРѕРјРµС‚СЂРёС‡РµСЃРєР°СЏ РїСЂРѕРіСЂРµСЃСЃРёСЏ РѕС‚ СЃС‚РµРїРµРЅРµР№ РґРІРѕР№РєРё РІ СЃС‚РµРїРµРЅРё РІС‹СЃРѕС‚С‹).
 	length_tree_array = pows_t(2, log2_length_base_array+1) - 1;
-	//Временно.
+	//Р’СЂРµРјРµРЅРЅРѕ.
 	for (size_t i = 0; i < length_tree_array; i++)
 		tree_array[i] = 0;
-	//Заполняем листья(!!!ВАЖНО: массив-дерево пронумерован не с 1, а с 0).
+	//Р—Р°РїРѕР»РЅСЏРµРј Р»РёСЃС‚СЊСЏ(!!!Р’РђР–РќРћ: РјР°СЃСЃРёРІ-РґРµСЂРµРІРѕ РїСЂРѕРЅСѓРјРµСЂРѕРІР°РЅ РЅРµ СЃ 1, Р° СЃ 0).
 	for (size_t i = 0; i < length_base_array; i++)
 		tree_array[length_tree_array - length_base_array + i] = base_array[i];
 
-	//Нормализуем дерево проходя по уровням.
+	//РќРѕСЂРјР°Р»РёР·СѓРµРј РґРµСЂРµРІРѕ РїСЂРѕС…РѕРґСЏ РїРѕ СѓСЂРѕРІРЅСЏРј.
 	for (size_t j = log2_length_base_array; j>0; j--){
 		size_t end = pows_t(2, j + 1) - 1;
 		for (size_t i = pows_t(2, j) - 1; i < end; i += 2)
@@ -81,10 +81,10 @@ void segment_tree::buildtree(){
 }
 
 int segment_tree::Min(size_t L, size_t R){
-	//-____-', быдлокод дофига.
+	//-____-', Р±С‹РґР»РѕРєРѕРґ РґРѕС„РёРіР°.
 
 	size_t length = R - L + 1;
-	//Сразу обработали частный случай.
+	//РЎСЂР°Р·Сѓ РѕР±СЂР°Р±РѕС‚Р°Р»Рё С‡Р°СЃС‚РЅС‹Р№ СЃР»СѓС‡Р°Р№.
 	if (length == 1) return base_array[R - 1];
 
 	size_t log2_length = (size_t)log2(length);
@@ -96,7 +96,7 @@ int segment_tree::Min(size_t L, size_t R){
 
 	if (length == pow2_length && !(R%pow2_length) ) return Min_of_tree_segment(L, R);
 
-	//Локальное позиционирование
+	//Р›РѕРєР°Р»СЊРЅРѕРµ РїРѕР·РёС†РёРѕРЅРёСЂРѕРІР°РЅРёРµ
 	size_t inside_point = length_base_array/2;
 	size_t i = 2;
 	while (inside_point < L || inside_point >= R){
@@ -106,7 +106,7 @@ int segment_tree::Min(size_t L, size_t R){
 	
 	
 	int MIN = 2147483647;
-	//Хаха, костыль, если отрезок из двух чисел и делить его уже не удается, то фигачим тупое сравнение.
+	//РҐР°С…Р°, РєРѕСЃС‚С‹Р»СЊ, РµСЃР»Рё РѕС‚СЂРµР·РѕРє РёР· РґРІСѓС… С‡РёСЃРµР» Рё РґРµР»РёС‚СЊ РµРіРѕ СѓР¶Рµ РЅРµ СѓРґР°РµС‚СЃСЏ, С‚Рѕ С„РёРіР°С‡РёРј С‚СѓРїРѕРµ СЃСЂР°РІРЅРµРЅРёРµ.
 	//if (length == 2 && (L != pow2_L || R != pow2_R)) return base_array[L + 1] < base_array[R + 1] ? base_array[L + 1] : base_array[R + 1];
 	
 	
@@ -119,8 +119,8 @@ int segment_tree::Min(size_t L, size_t R){
 }
 
 int segment_tree::Min_of_tree_segment(size_t L, size_t R){
-	//Границы используются умозрительные, сдвинуты относительно позиций массива на одну ячейку.
-	//Коряво написано, но работает.
+	//Р“СЂР°РЅРёС†С‹ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ СѓРјРѕР·СЂРёС‚РµР»СЊРЅС‹Рµ, СЃРґРІРёРЅСѓС‚С‹ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїРѕР·РёС†РёР№ РјР°СЃСЃРёРІР° РЅР° РѕРґРЅСѓ СЏС‡РµР№РєСѓ.
+	//РљРѕСЂСЏРІРѕ РЅР°РїРёСЃР°РЅРѕ, РЅРѕ СЂР°Р±РѕС‚Р°РµС‚.
 	size_t length = R - L + 1;
 	size_t level = log2_length_base_array - (size_t)log2(length);
 	size_t level_position = (size_t)R / (length) - 1;
@@ -131,7 +131,7 @@ int segment_tree::Min_of_tree_segment(size_t L, size_t R){
 
 void segment_tree::Set(size_t I, int X){
 	base_array[I - 1] = X;
-	//Вставим в дерево.
+	//Р’СЃС‚Р°РІРёРј РІ РґРµСЂРµРІРѕ.
 	tree_array[length_tree_array - length_base_array + I-1] = X;
 	normalize(length_tree_array - length_base_array + I-1);
 
@@ -139,7 +139,7 @@ void segment_tree::Set(size_t I, int X){
 
 void segment_tree::normalize(size_t I){
 	size_t neighbour = (I % 2) ? I + 1 : I - 1;
-	size_t parent = (I+1) / 2-1;//Начало позиционирования с нуля, поэтому и прибавляем единицу.
+	size_t parent = (I+1) / 2-1;//РќР°С‡Р°Р»Рѕ РїРѕР·РёС†РёРѕРЅРёСЂРѕРІР°РЅРёСЏ СЃ РЅСѓР»СЏ, РїРѕСЌС‚РѕРјСѓ Рё РїСЂРёР±Р°РІР»СЏРµРј РµРґРёРЅРёС†Сѓ.
 	int last_tree_array_parent_value = tree_array[parent];
 	
 	tree_array[parent] = (tree_array[I] < tree_array[neighbour]) ? tree_array[I] : tree_array[neighbour];

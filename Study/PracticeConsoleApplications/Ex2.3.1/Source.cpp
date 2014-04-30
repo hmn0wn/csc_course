@@ -1,4 +1,4 @@
-
+ï»¿
 
 #include <iostream>
 #include <fstream>
@@ -6,7 +6,7 @@ using namespace std;
 
 void mergeSort(int *p, size_t n, int *tmp){
 
-	if (n == 1) return; //Ïîïðîáóåì ñíà÷àëà òàê, à ïîñëå óáðàâ ñëåäóþùèé áëîê.
+	if (n == 1) return; //ÐŸÐ¾Ð¿Ñ€Ð¾Ð±ÑƒÐµÐ¼ ÑÐ½Ð°Ñ‡Ð°Ð»Ð° Ñ‚Ð°Ðº, Ð° Ð¿Ð¾ÑÐ»Ðµ ÑƒÐ±Ñ€Ð°Ð² ÑÐ»ÐµÐ´ÑƒÑŽÑ‰Ð¸Ð¹ Ð±Ð»Ð¾Ðº.
 
 	if (n == 2){
 		if (p[0] > p[1]){
