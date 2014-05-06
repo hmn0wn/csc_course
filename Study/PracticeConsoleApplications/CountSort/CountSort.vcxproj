@@ -14,6 +14,7 @@
     <ProjectGuid>{FF87EBF6-4FA6-48E8-8AEF-8002AF94F3D9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CountSort</RootNamespace>
+    <ProjectName>Ex1.x.x(Count_sort)</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

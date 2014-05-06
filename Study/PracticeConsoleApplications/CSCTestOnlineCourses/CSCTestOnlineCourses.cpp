@@ -20,7 +20,7 @@ int _tmain(int argc, _TCHAR* argv[]){
 			c = a;
 			a = b;
 			b = (b + c) % 100000;
-			//cout << b << endl;
+			cout << b << endl;
 		}
 		//cout << b;
 		return 0;
