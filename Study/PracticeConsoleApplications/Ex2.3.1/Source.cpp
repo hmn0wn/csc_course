@@ -6,16 +6,7 @@ using namespace std;
 
 void mergeSort(int *p, size_t n, int *tmp){
 
-	if (n == 1) return; //Попробуем сначала так, а после убрав следующий блок.
-
-	if (n == 2){
-		if (p[0] > p[1]){
-			tmp[0] = p[1];
-			p[1] = p[0];
-			p[0] = tmp[0];
-		}
-		return;
-	}
+	if (n == 1) return; 
 
 	size_t m = n / 2;
 	mergeSort(p, m, tmp);
