@@ -9,17 +9,27 @@ size_t length_(size_t *b, size_t *e){
 	return ((size_t)e - (size_t)b) / sizeof(size_t)+1;
 }
 
+template< typename T >
+ostream &print(ostream &stream, T *array_, size_t length){
+	for (size_t i = 0; i < length; i++)
+		stream << array_[i] << " ";
+
+	stream << endl;
+	return stream;
+}
+
+#pragma region Queue_
 class Queue_{//Очередь, че. Пишу как представляю.
 private:
 	struct node{
-		size_t *b;
-		size_t *e;
+		size_t b;
+		size_t e;
 		size_t length;
 		node *next;
 		node *prev;
-		node(size_t *begin, size_t *end) :b(begin), e(end), length(length_(b, e)), next(NULL), prev(NULL){}
+		node(size_t begin, size_t end) :b(begin), e(end), length(e-b+1), next(NULL), prev(NULL){}
 		ostream &print(ostream &stream){
-			stream << "[" << *b << " , " << *e << "]" << "(" << length << ") ";
+			stream << "[" << b << ".." << length << ".." << e << "] ";
 			return stream;
 		}
 	};
@@ -31,14 +41,14 @@ public:
 	node *tail;
 
 	Queue_();
-	void enqueue(size_t *begin, size_t *end);//В очередь.
-	node *dequeue();//Из очереди.
+	void enqueue(size_t begin, size_t end);//В очередь.
+	void dequeue(size_t &begin, size_t &end);//Из очереди.
 	ostream &print(ostream &stream);
 	ostream &operator<<(node *n);
 };
 Queue_::Queue_():length(0),head(NULL),tail(NULL){}
 
-void Queue_::enqueue(size_t *begin, size_t *end){
+void Queue_::enqueue(size_t begin, size_t end){
 	node *tmp = new node(begin, end);
 	if (!tail){
 		head = tmp;
@@ -52,10 +62,13 @@ void Queue_::enqueue(size_t *begin, size_t *end){
 	length++;
 }
 
-Queue_::node *Queue_::dequeue(){
+void Queue_::dequeue(size_t &begin, size_t &end){
 	node *tmp = head;
 	if(head && head->prev) head = head->prev;
-	return tmp;
+	begin = tmp->b;
+	end = tmp->e;
+	delete(tmp);
+
 }
 
 ostream &Queue_::print(ostream &stream){
@@ -67,29 +80,60 @@ ostream &Queue_::print(ostream &stream){
 	}
 	
 	stream << endl;
-	iter = head;
-	while (iter){
-		//stream << "[" << *iter->b << " : " << *iter->e << "]";
-		iter->print(stream);
-		iter = iter->prev;
-	}
 	stream << endl;
 	return stream;
 }
 
-template< typename T >
-ostream &print(ostream &stream, T *array_, size_t length){
+
+#pragma endregion
+
+void merge_sort(size_t *a, char *b, size_t length){
+	Queue_ merge_queue;
+	size_t *tmpa = new size_t[length];
+	char *tmpb = new char[length];
 	for (size_t i = 0; i < length; i++)
-		stream << array_[i] << " ";
-	
-	stream << endl;
-	return stream;
-}
+		merge_queue.enqueue(i, i);
 
-void merge_sort(size_t *a, size_t *b, size_t length){
-	Queue_ merge_queue, merge_queue_borders;
-	for (size_t i = 0; i < length; i++){
-		merge_queue.enqueue(&a[i], &a[i]);
+	size_t begin1, end1, begin2, end2, i, j, k;
+	while (merge_queue.head){
+		merge_queue.dequeue(begin1,end1);
+		merge_queue.dequeue(begin2, end2);
+		
+		i = begin1;
+		j = begin2;
+		k = 0;
+		
+		while (i <= end1 || j <= end2){
+			if (i > end1){
+				tmpa[k] = a[j];
+				tmpb[k++] = b[j++];
+				continue;
+			}
+			if (j > end2){
+				tmpa[k] = a[i];
+				tmpb[k++] = b[i++];
+				continue;
+			}
+
+			if (a[i] <= a[j]){
+				tmpa[k] = a[i];
+				tmpb[k++] = b[i++];
+
+			}
+
+			for (size_t i = begin1; i < (end1 - begin1 + 1) + (end2 - begin2 + 1); i++){
+				a[i] = tmpa[i];
+				b[i] = tmpb[i];
+			}
+
+			//Теперь добавим в очереть новый, объединенный массив.
+			merge_queue.enqueue(begin1, end2);
+			
+		}
+
+	}
+	
+	
 		
 }
 
@@ -108,7 +152,7 @@ int main(){
 		in >> b >> e;
 		all[i * 2] = b;
 		all[i * 2 + 1] = e;
-		myqeue.enqueue(&all[i*2], &all[i*2+1]);
+		myqeue.enqueue(all[i*2], all[i*2+1]);
 		borders[i * 2] = '[';
 		borders[i * 2 + 1] = ']';
 	}
@@ -118,11 +162,7 @@ int main(){
 		borders[i + 2 * n] = '.';
 	}
 
-	cout << "all: ";
-	print<size_t>(cout, all, 2 * n + m);
-	cout << "borders: ";
-	print<char>(cout, borders, 2*n+m);
-	myqeue.print(cout);
+	merge_sort(all, borders, n*2+m);
 
 }
 
