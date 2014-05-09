@@ -76,6 +76,7 @@ void Queue_::dequeue(size_t **dat, size_t &len){
 
 ostream &Queue_::print(ostream &stream){
 	node *iter = tail;
+	stream << "Q: ";
 	while (iter){
 		//stream << "[" << *iter->b << " : " << *iter->e << "] ";
 		iter->print(stream);
