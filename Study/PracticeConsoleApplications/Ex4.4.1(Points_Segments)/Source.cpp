@@ -240,20 +240,22 @@ size_t bin_search(int *data, char *shadow_data, size_t length, int point){
 	
 	size_t begin =0, mid = 0, end = length-1;
 	
-	while ((data[mid] != point || shadow_data[mid] != '.') && begin<=end)
+	while ((data[mid] != point || shadow_data[mid] != '.')&&begin<=end)
 	{
-		length = length / 2;
+		//„ерт, не выходит сойтись в частном случае, когда b=12, e=13, m=13, а отрезок нужно выбрать левый.
+		length = (end-begin +1) / 2;
 		mid = begin + length;
 		
-		//cout << " begin: " << begin << endl;	
+		//cout <<endl<< " begin: " << begin << endl;	
+		//cout << "length: " << length << endl;
 		//cout << "   mid: " << mid << endl;
-		//cout << "   end: " << end << endl;
-		//cout << "length: " << length << endl<<endl;
+		//cout << "   end: " << end << endl << endl;
+		
 		
 
-		if (point < data[mid] ) { end = mid; continue; }
+		if (point < data[mid] ) { end = mid-1; continue; }
 		if (data[mid] < point ) { begin = mid + 1; continue; }
-		if (shadow_data[mid] == '}') { end = mid; continue; }
+		if (shadow_data[mid] == '}') { end = mid-1; continue; }
 		if (shadow_data[mid] == '{') { begin = mid + 1; continue; }
 		
 	}
@@ -293,11 +295,11 @@ int main(){
 	merge_sort(&all,&brackets, n*2+m);
 	//cout << "       i: [";
 	//for (size_t i = 0; i < n * 2 + m-1; i++)
-		//cout << i << " ";
+	//	cout << i << " ";
 	//cout <<2*n+m-1 << "]" << endl;
-	print(cout, "  points", points, m);
-	print(cout, "     all", all, 2 * n + m);
-	print(cout, "brackets", brackets, 2 * n + m);
+	//print(cout, "  points", points, m);
+	//print(cout, "     all", all, 2 * n + m);
+	//print(cout, "brackets", brackets, 2 * n + m);
 	
 
 	//“еперь подсчитаем вложенность дл€ всех элементов.
@@ -307,12 +309,12 @@ int main(){
 	else if (brackets[i] == '}') count[i] = --COUNT;
 	else count[i] = COUNT;
 
-	print(cout, "   count", count, 2 * n + m);
-	
+	//print(cout, "   count", count, 2 * n + m);
+
 	//cout << endl << "p_count: ";
 	//ѕоиск по точкам.(ƒл€ начала не бинарный, ибо лень, авось пройдет.)
 	for (size_t i = 0; i < m; i++)
-		cout << count[bin_search(all, brackets, n * 2 + m, points[i])] << " ";
+		cout << count[bin_search(all, brackets, n * 2 + m, points[i])] << " " ;
 	
 	cout << endl;
 	
