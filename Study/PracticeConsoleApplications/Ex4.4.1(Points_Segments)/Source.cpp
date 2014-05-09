@@ -84,21 +84,21 @@ void Queue_::dequeue(size_t **dat, char **sh_dat, size_t &len){
 
 
 ostream &Queue_::print(ostream &stream){
-	node *iter = tail;
+	node *iter = head;
 	stream << "  Q: ";
 	while (iter){
 		//stream << "[" << *iter->b << " : " << *iter->e << "] ";
 		iter->print_data(stream);
-		iter = iter->next;
+		iter = iter->prev;
 	}
 	stream << endl;
 	
-	iter = tail;
+	iter = head;
 	stream << "S_Q: ";
 	while (iter){
 		//stream << "[" << *iter->b << " : " << *iter->e << "] ";
 		iter->print_shadow_data(stream);
-		iter = iter->next;
+		iter = iter->prev;
 	}
 	stream << endl;
 	stream << endl;
@@ -128,7 +128,7 @@ size_t length_(size_t *b, size_t *e){
 
 #pragma endregion
 
-void merge_sort(size_t *data, char *shadow_data, size_t length){
+void merge_sort(size_t **data, char **shadow_data, size_t length){
 	Queue_ merge_queue;
 
 	size_t *tmp;
@@ -136,8 +136,8 @@ void merge_sort(size_t *data, char *shadow_data, size_t length){
 	for (size_t i = 0; i < length; i++){
 		tmp = new size_t[1];
 		sh_tmp = new char[1];
-		tmp[0] = data[i];
-		sh_tmp[0] = shadow_data[i];
+		tmp[0] = (*data)[i];
+		sh_tmp[0] = (*shadow_data)[i];
 		merge_queue.enqueue(tmp, sh_tmp, 1);
 		merge_queue.print(cout);
 	}
@@ -174,14 +174,14 @@ void merge_sort(size_t *data, char *shadow_data, size_t length){
 				continue;
 			}
 
+#pragma region —ортировка двух элементов по двум параметрам, первый из которых имеет два значени€, второй три.
 			if (dat1[i] < dat2[j]){
 				tmp[k] = dat1[i];
 				sh_tmp[k++] = sh_dat1[i++];
 
 			}
-#pragma region —ортировка двух элементов по двум параметрам, первый из которых имеет два значени€, второй три.
-			else{
-				if (dat1[i] = dat2[i]){//“очки должны быть внутри отрезков, даже, если они на границе, и плюс стабильность(одинаковые элементы сохран€ют пор€док следовани€).
+			else{//—лучай равенства по значению.
+				if (dat1[i] == dat2[i]){//“очки должны быть внутри отрезков, даже, если они на границе, и плюс стабильность(одинаковые элементы сохран€ют пор€док следовани€).
 					if (sh_dat1[i] == '{'){
 						tmp[k] = dat1[i];
 						sh_tmp[k++] = sh_dat1[i++];
@@ -230,12 +230,16 @@ void merge_sort(size_t *data, char *shadow_data, size_t length){
 		merge_queue.print(cout);
 	}
 
+	*data = merge_queue.head->data;
+	*shadow_data = merge_queue.head->shadow_data;
 }
+
+
 
 int main(){
 	ifstream in("input.txt");
 	Queue_ myqeue;
-	size_t n, m, iter = 0, b,e;
+	size_t n, m, b,e;
 
 	in >> n >> m;
 	size_t *all = new size_t[n * 2 + m];//“ут все, и точки и концы отрезков.
@@ -259,7 +263,30 @@ int main(){
 
 	print(cout,"all", all, 2 * n + m);
 	print(cout, "brackets", brackets, 2 * n + m);
-	merge_sort(all,brackets, n*2+m);
+	merge_sort(&all,&brackets, n*2+m);
+
+	//“еперь подсчитаем вложенность дл€ всех элементов.
+	size_t COUNT = 0;
+	for (size_t i = 0; i < n * 2 + m; i++)
+	if (brackets[i] == '{') count[i] = ++COUNT;
+	else if (brackets[i] == '}') count[i] = --COUNT;
+	else count[i] = COUNT;
+
+	print(cout, "count", count, 2 * n + m);
+	cout << endl << "p_count: ";
+	//ѕоиск по точкам.(ƒл€ начала не бинарный, ибо лень, авось пройдет.)
+	for (size_t i = 0; i < m; i++)
+		for (size_t j = 0; j < n * 2 + m; j++)
+		if (brackets[j] == '.' && all[j] == points[i]){
+			cout << count[j] << " ";
+			break;
+		}
+	
+	cout << endl;
+	
+
+	
+
 
 }
 
