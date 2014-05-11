@@ -31,12 +31,15 @@ private:
 public:
 	size_t edges_num;
 	size_t vertices_num;
+	bool *visited;
 		
 	
-	Graph() :head(NULL), edges_num(0), vertices_num(0) {}
+	Graph() :head(NULL), edges_num(0), vertices_num(0), visited(NULL) {}
 	void add(size_t xv, size_t yv);
 	void add(istream &in);
-	void explore(size_t v, bool *visited);
+	void explore(size_t v);
+	void dfs();
+	void clrvisited();
 	ostream &printadj(ostream & stream);
 
 };
@@ -68,17 +71,29 @@ void Graph::add(istream &in){
 	}
 	this->vertices_num = vn;
 	this->edges_num = en;
+	visited = new bool[vn];
+	fillarray(visited, false, vn);
 }
 
-void Graph::explore(size_t v, bool *visited){
-	visited[v] = true;
+void Graph::explore(size_t v){
+	visited[v-1] = true;
 	node *tmp = head;
 	while (tmp){
-		if (tmp->first_vertice == v && !visited[tmp->second_vertice]) explore(tmp->second_vertice, visited);//Ќыр€ем если можно и если не былы там.
+		if (tmp->first_vertice == v && !visited[tmp->second_vertice-1]) explore(tmp->second_vertice);//Ќыр€ем если можно и если не былы там.
 		tmp = tmp->next;
 	}
 	//‘ункци€ дл€ ориентированного ребра, а при вводе дл€ неоориентированного нужно продублировать.
 
+}
+
+void Graph::dfs(){
+	clrvisited();
+	for (size_t i = 1; i <= this->vertices_num; i++)	
+	if (!visited[i-1]) explore(i);
+}
+
+void Graph::clrvisited(){
+	fillarray(visited, false, this->vertices_num + 1);
 }
 
 ostream &Graph::printadj(ostream &stream){
@@ -106,13 +121,11 @@ int main(){
 	mygraph_.add(in);
 	mygraph_.printadj(cout);
 
-	bool *visited = new bool[mygraph_.vertices_num+1];
 	
-
 	for (size_t i = 1; i < mygraph_.vertices_num+1; i++){
 		cout << endl<<"explore[" << i << "]: ";
-		fillarray(visited, false, mygraph_.vertices_num+1);
-		mygraph_.explore(i, visited);
-		printarray(cout, visited, 1, mygraph_.vertices_num);
+		mygraph_.clrvisited();
+		mygraph_.explore(i);
+		printarray(cout, mygraph_.visited, 1, mygraph_.vertices_num);
 	}
 }
