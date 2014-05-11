@@ -32,9 +32,10 @@ public:
 	size_t edges_num;
 	size_t vertices_num;
 	bool *visited;
+	size_t connected_component_count;
 		
 	
-	Graph() :head(NULL), edges_num(0), vertices_num(0), visited(NULL) {}
+	Graph() :head(NULL), edges_num(0), vertices_num(0), visited(NULL), connected_component_count(0) {}
 	void add(size_t xv, size_t yv);
 	void add(istream &in);
 	void explore(size_t v);
@@ -65,7 +66,7 @@ void Graph::add(istream &in){
 	in >> vn >> en;
 
 	for (size_t i = 0; i < en; i++){
-		in >> xv >> yv >> w;
+		in >> xv >> yv/* >> w*/;
 		this->add(xv, yv);
 		this->add(yv, xv);
 	}
@@ -87,9 +88,10 @@ void Graph::explore(size_t v){
 }
 
 void Graph::dfs(){
+	connected_component_count = 0;
 	clrvisited();
 	for (size_t i = 1; i <= this->vertices_num; i++)	
-	if (!visited[i-1]) explore(i);
+	if (!visited[i - 1]) { connected_component_count++; explore(i); }
 }
 
 void Graph::clrvisited(){
@@ -111,21 +113,26 @@ ostream &Graph::printadj(ostream &stream){
 
 int main(){
 	ifstream in("input.txt");
-	Graph mygraph;
+	/*Graph mygraph;
 	for (size_t i = 0; i < 10; i++){
 		mygraph.add(1, 1);
 	}
-	mygraph.printadj(cout);
+	mygraph.printadj(cout);*/
 	
+
 	Graph mygraph_;
 	mygraph_.add(in);
-	mygraph_.printadj(cout);
+	//mygraph_.printadj(cout);
 
 	
-	for (size_t i = 1; i < mygraph_.vertices_num+1; i++){
+	/*for (size_t i = 1; i < mygraph_.vertices_num+1; i++){
 		cout << endl<<"explore[" << i << "]: ";
 		mygraph_.clrvisited();
 		mygraph_.explore(i);
 		printarray(cout, mygraph_.visited, 1, mygraph_.vertices_num);
-	}
+		
+	}*/
+
+	mygraph_.dfs();
+	cout << mygraph_.connected_component_count << endl;
 }
