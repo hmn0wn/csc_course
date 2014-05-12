@@ -39,7 +39,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex4.4.1(Points_Segments)", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex4.4(Quick_Sort)", "Ex4.4(Quick_Sort)\Ex4.4(Quick_Sort).vcxproj", "{1FE339E5-0E9B-48BB-B7F7-F8F305E6D7B0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex5(Graph_Class)", "Ex5(Graph_Class)\Ex5(Graph_Class).vcxproj", "{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex5(Graph_Class)(Ex5.2.1-Ex5.2.2)(Explore,GFS)", "Ex5(Graph_Class)\Ex5(Graph_Class).vcxproj", "{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex5.3(Oriented_Graph)", "Ex5.3(Oriented_Graph)\Ex5.3(Oriented_Graph).vcxproj", "{50D4EEC1-077D-4A36-B61A-41CB1891E7DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +121,10 @@ Global
 		{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB}.Debug|Win32.Build.0 = Debug|Win32
 		{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB}.Release|Win32.ActiveCfg = Release|Win32
 		{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB}.Release|Win32.Build.0 = Release|Win32
+		{50D4EEC1-077D-4A36-B61A-41CB1891E7DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{50D4EEC1-077D-4A36-B61A-41CB1891E7DB}.Debug|Win32.Build.0 = Debug|Win32
+		{50D4EEC1-077D-4A36-B61A-41CB1891E7DB}.Release|Win32.ActiveCfg = Release|Win32
+		{50D4EEC1-077D-4A36-B61A-41CB1891E7DB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +146,7 @@ Global
 		{80F22B48-CCCB-456F-AB0D-28244BF990BE} = {9A03099B-B821-4692-B572-BA2FE9182785}
 		{1FE339E5-0E9B-48BB-B7F7-F8F305E6D7B0} = {9A03099B-B821-4692-B572-BA2FE9182785}
 		{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB} = {9A03099B-B821-4692-B572-BA2FE9182785}
+		{50D4EEC1-077D-4A36-B61A-41CB1891E7DB} = {9A03099B-B821-4692-B572-BA2FE9182785}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

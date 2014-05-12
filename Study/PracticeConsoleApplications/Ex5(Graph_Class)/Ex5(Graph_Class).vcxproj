@@ -14,6 +14,7 @@
     <ProjectGuid>{3592D3A8-E116-41D1-8A38-C03DAC9D3BAB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Ex5Graph_Class</RootNamespace>
+    <ProjectName>Ex5(Graph_Class)(Ex5.2.1-Ex5.2.2)(Explore,GFS)</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
