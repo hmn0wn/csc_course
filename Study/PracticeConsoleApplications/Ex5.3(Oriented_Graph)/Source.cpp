@@ -2,14 +2,17 @@
 #include <iostream>
 using namespace std;
 
+
+
 template <class T>
 void  fillarray(T *arr, T value, size_t size){
 	for (size_t i = 0; i < size; i++) arr[i] = value;
 }
 
 template<class T>
-ostream &printarray(ostream &stream, T *arr, size_t begin, size_t end){
-	stream << endl;
+ostream &printarray(ostream &stream, T *arr, char label[100], size_t begin, size_t end){
+	//stream << endl;
+	//stream << label << ": ";
 	for (size_t i = begin; i <= end; i++)
 		stream << arr[i] << " ";
 	stream << endl;
@@ -19,35 +22,37 @@ ostream &printarray(ostream &stream, T *arr, size_t begin, size_t end){
 class Graph{
 private:
 	struct node{
-		size_t first_vertice;
-		size_t second_vertice;
-		int weight;
+		size_t name;
 		node *next;
-		node(size_t fir_v, size_t sec_v)
-			:first_vertice(fir_v), second_vertice(sec_v), next(NULL), weight(0){}
+		node() : name(0), next(NULL){}
+		node(size_t nm, node *n) : name(nm), next(n){}
 	};
-
-	node *head;
+	
 public:
-	size_t edges_num;
-	size_t vertices_num;
-	bool *visited;
-	size_t *first_time;
-	size_t *last_time;
-	size_t connected_component_count;
-
+	size_t e_num;
+	size_t v_num;
+	size_t c_c_count;
 	size_t timer;
 	bool circle;
 
+	node *vertices;
+	size_t *tsorted_vertices;
+	bool *visited;
+	size_t *indegree;
+	size_t *f_time;
+	size_t *l_time;
+	
 
-	Graph() :head(NULL), edges_num(0), vertices_num(0), visited(NULL), connected_component_count(0), timer(0), first_time(NULL), last_time(NULL), circle(false) {}
+	Graph() :e_num(0), v_num(0), c_c_count(0),timer(0), circle(false), vertices(NULL), visited(NULL),  f_time(NULL), l_time(NULL), tsorted_vertices(NULL){
+	
+	}
 	void add(size_t xv, size_t yv);
 	void add(istream &in);
-	void merge_sort(node *begin, size_t size);
-	void bubble_sort();
-	void swap(node *x, node *y);
+	
 	void explore(size_t v);
 	void dfs();
+	void top_sort();
+
 	void clrvisited();
 	ostream &print_adjacency(ostream &stream);
 	ostream &print_time_segments(ostream &stream);
@@ -58,176 +63,129 @@ public:
 };
 
 void Graph::add(size_t xv, size_t yv){
-
-	if (head){
-		node *tmp = head;
-		while (tmp->next){
-			if (tmp->first_vertice == xv && tmp->second_vertice == yv) return;
-			tmp = tmp->next;
-		}
-		if (tmp->first_vertice == xv && tmp->second_vertice == yv) return;
-		tmp->next = new node(xv, yv);
-		if (this->vertices_num < xv) this->vertices_num = xv;
-		if (this->vertices_num < yv) this->vertices_num = yv;
-	}
-	else head = new node(xv, yv);
-	
-	//Ѕыдлокод.
-	delete(visited);
-	visited = new bool[vertices_num];
-	delete(first_time);
-	first_time = new size_t[vertices_num];
-	fillarray<size_t>(first_time, 0, vertices_num);
-	delete(last_time);
-	last_time = new size_t[vertices_num];
-	fillarray<size_t>(last_time, 0, vertices_num);
-
-	edges_num++;
+	node *tmp = &vertices[xv];
+	while (tmp->next && tmp->next->name < yv) 
+		tmp = tmp -> next;
+	tmp->next = new node(yv, tmp->next);//¬ставл€ем сразу на нужное место
 }
 
 void Graph::add(istream &in){
 	size_t xv, yv, vn, en;
-	int w;
 	in >> vn >> en;
 
+	vertices = new node[vn+1];
+	this->v_num = vn;
+	this->e_num = en;
+
+	for (size_t i = 1; i <= vn; i++)
+		vertices[i].name = i;
+
+	visited = new bool[vn+1];
+	fillarray(visited, false, vn+1);
+
+	f_time = new size_t[vn+1];
+	fillarray<size_t>(f_time, 0, vn+1);
+
+	l_time = new size_t[vn+1];
+	fillarray<size_t>(l_time, 0, vn+1);
+	
+	tsorted_vertices = new size_t[vn + 1];
+	fillarray<size_t>(tsorted_vertices, 0, vn+1);
+
+	indegree = new size_t[vn + 1];
+	fillarray<size_t>(indegree, 0, vn + 1);
+
 	for (size_t i = 0; i < en; i++){
-		in >> xv >> yv/* >> w*/;
+		in >> xv >> yv;
 		this->add(xv, yv);
+		indegree[yv]++;
 		
 	}
-	this->vertices_num = vn;
-	this->edges_num = en;
-
-	visited = new bool[vn];
-	fillarray(visited, false, vn);
-
-	first_time = new size_t[vn];
-	fillarray<size_t>(first_time, 0, vn);
-
-	last_time = new size_t[vn];
-	fillarray<size_t>(last_time, 0, vn);
-}
-
-/*void Graph::merge_sort(node **head, node *begin, size_t size){
-
-	if (size == 1) return;
-	node *begin1 = begin, *begin2 = begin1;
-	size_t size1 = size / 2, size2 = size - size1;
 	
-	for (size_t i = 0; i < size1; i++) begin2 = begin2->next;
-	merge_sort(begin1, size1);
-	merge_sort(begin2, size2);
-
-	//ќтсортировали подсписки, теперь сливаем.
-	
-	
-	
-
-	node *tmp;//ј итерировать€ будем уже ранее созданными begin1, begin2.
-	size_t i = 0, j = 0;
-	//“ак, дл€ начала нам необходимо зафиксировать самое начало, выбрать из двух первых элементов списков самый маленький элемент.
-	if (begin1->first_vertice < begin2->first_vertice){
-		begin
-	}
-	
-	while (i < size1 && j < size2){
-		
-		if (begin1->first_vertice < begin2->first_vertice){
-			//tmp->next///
-		}
-	}
-
-
-}*/
-
-void Graph::bubble_sort(){
-
-	if (edges_num <= 1) return;//Ќечего сортировать.
-	node *ni, *nj;
-	for (size_t i = edges_num-1; i > 0; i--){
-		ni = head;
-		nj = head->next;
-		for (size_t j = 0; j < i; j++){
-
-			if (ni->first_vertice > nj->first_vertice) swap(ni, nj);
-			else 
-			if (ni->first_vertice == nj->first_vertice)
-			if (ni->second_vertice > nj->second_vertice) swap(ni, nj);
-			
-			ni = nj;
-			nj = nj->next;
-			
-
-		}
-	}
-}
-
-void Graph::swap(node *x, node *y){
-	size_t tmp = x->first_vertice;
-	x->first_vertice = y->first_vertice;
-	y->first_vertice = tmp;
-
-	tmp = x->second_vertice;
-	x->second_vertice = y->second_vertice;
-	y->second_vertice = tmp;
-
-	//¬ес у всех пока нулевой, так что не мен€ю.
 }
 
 void Graph::explore(size_t v){
-	// ажетс€, что этот массив больше не нужен.
-	visited[v - 1] = true;
-	//«аписываем врем€ начала обработки вершины.
-	first_time[v - 1] = ++timer;
-	node *tmp = head;
-	while (tmp){
-		if (tmp->first_vertice == v){
-			//ѕровека на обратные и перекрестные ребра.
-			if (first_time[tmp->second_vertice - 1] > 0 && last_time[tmp->second_vertice-1] == 0) {
-				circle = true;
-				//cout << endl << "circle: " << tmp->second_vertice << endl;
-				//cout << "time: " << timer << endl;
-			}
-			//ѕереходим по следующему ребру, если еще не были в мершине, что на конце его.
-			if (!visited[tmp->second_vertice - 1])
-				explore(tmp->second_vertice);
+	
+	visited[v] = true;
+	
+	f_time[v] = ++timer;//«аписываем врем€ начала обработки вершины.
+
+	node *tmp = &vertices[v];
+	while (tmp->next){
+		tmp = tmp->next;
+		if (f_time[tmp->name] > 0 && l_time[tmp->name] == 0) {//ѕровека на обратные и перекрестные ребра.
+			circle = true;
+			cout << endl << "circle: " << tmp->name << endl;
+			cout << "time: " << timer << endl;
 		}
-			tmp = tmp->next;		
+
+		//ѕереходим по следующему ребру, если еще не были в вершине, что на конце его.
+		if (!visited[tmp->name])
+			explore(tmp->name);
 	}
-	//–екурси€ вт€гиваетс€, пройд€ по всем возможным ребрам исход€щим из вершины, мы в нее возвращаемс€ и записываем конец временного отрезка обработки.
-	last_time[v - 1] = ++timer;
+					
+		//–екурси€ вт€гиваетс€, пройд€ по всем возможным ребрам исход€щим из вершины, мы в нее возвращаемс€ и записываем конец временного отрезка обработки.
+	l_time[v] = ++timer;
 
 }
 
 void Graph::dfs(){
-	connected_component_count = 0;
+	c_c_count = 0;
 	clrvisited();
-	for (size_t i = 1; i <= this->vertices_num; i++)
-	if (!visited[i - 1]) { connected_component_count++; explore(i); }
+	for (size_t i = 1; i <= this->v_num; i++)
+	if (!visited[i]) { c_c_count++; explore(i); }
+}
+
+void Graph::top_sort(){
+
+	size_t iter = 1, jter = 1;
+	node *tmp;
+	for (size_t i = 1; i <= v_num; i++)
+	if (!indegree[i]) tsorted_vertices[jter++] = i;
+
+	while (iter <= v_num){
+		//printarray(cout, indegree, "indegree", 1, v_num);
+		//printarray(cout, tsorted_vertices, "topological sorted graph", 1, v_num);
+
+		tmp = &vertices[tsorted_vertices[iter++]];
+		while (tmp->next){
+			tmp = tmp->next;
+			indegree[tmp->name]--;
+			if(!indegree[tmp->name]) tsorted_vertices[jter++] = tmp->name;
+		}
+	}
+
+	
+
 }
 
 void Graph::clrvisited(){
-	fillarray(visited, false, this->vertices_num + 1);
+	fillarray(visited, false, this->v_num + 1);
 }
+
 
 ostream &Graph::print_adjacency(ostream &stream){
 	stream << endl << "adjacency list: " << endl << endl;
-	node *tmp = head;
-	while (tmp){
-		stream << "(" << tmp->first_vertice << "," << tmp->second_vertice << ") - ";
-		tmp = tmp->next;
+	node *tmp;
+	for (size_t v = 1; v <= this->v_num; v++){
+		tmp = &vertices[v];
+		while (tmp){
+			stream << "(" << tmp->name << ") - ";
+			tmp = tmp->next;
+		}
+		stream << "NULL" << endl;
 	}
-	stream << "NULL" << endl << "______________________________________________________________________________________________________________________" << endl;
+	stream << "______________________________________________________________________________________________________________________" << endl;
 	return stream;
 }
 
 ostream &Graph::print_time_segments(ostream &stream){
 
 	stream << endl << "time segments: " << endl << endl;
-	for (size_t v = 1; v <= vertices_num; v++){
-		stream << "[" << v << "]: " /*<< first_time[v-1] << " "<<last_time[v-1] <<"): " <<endl*/;
+	for (size_t v = 1; v <= v_num; v++){
+		stream << "[" << v << "]: " << f_time[v] << " "<<l_time[v] <<"): " <<endl;
 		for (size_t t = 0; t <= timer; t++)
-			stream << ((t<first_time[v - 1] || t>last_time[v - 1]) ? " " : "_");
+			stream << ((t<f_time[v] || t>l_time[v]) ? " " : "_");
 		stream << endl;
 	}
 
@@ -235,76 +193,45 @@ ostream &Graph::print_time_segments(ostream &stream){
 	return stream;
 }
 
-void Graph::traverce_test(){
-	cout << endl << "traverce test: " << endl;
-	//“естируем обход.
-	for (size_t i = 1; i < this->vertices_num + 1; i++){
-		cout << endl << "explore[" << i << "]: ";
-		this->clrvisited();
-		this->explore(i);
-		printarray(cout, this->visited, 0, this->vertices_num - 1);
-
-	}
-	cout << endl << "______________________________________________________________________________________________________________________" << endl;
-}
-
-void Graph::path_check_test(){
-	//“естируем проверку пути.	
-	cout << endl << "path check test: " << endl;
-	for (size_t x = 1; x <= this->vertices_num; x++){
-		cout << endl;
-		for (size_t y = 1; y <= this->vertices_num; y++){
-			this->clrvisited();
-			this->explore(x);
-			cout << x << "->" << y << ": " << ((this->visited[y - 1]) ? "True" : "False") << endl;
-		}
-	}
-	cout << endl << "______________________________________________________________________________________________________________________" << endl;
-}
-
-
 int main(){
+	
 	ifstream in("input.txt");
-	/*Graph mygraph;
-	for (size_t i = 1; i < 1001; i++){
-	mygraph.add(i, i+1);
-	}*/
-	//mygraph.print_adjacency(cout);
-	//mygraph.traverce_test();
-	//mygraph.path_check_test();
+	ofstream out("output.txt");
+	/*size_t n = 100;
+	out << n <<" "<< n << endl;
+	for (size_t i = 1; i <= n; i++)
+		out << (rand() % n) +1 << " " << (rand() % n) +1 << endl;*/
+	
+	Graph g;
+	g.add(in);
 
-	Graph mygraph_;
-	mygraph_.add(in);
-	//printarray(cout, mygraph_.first_time, 0, mygraph_.vertices_num - 1);
-	//printarray(cout, mygraph_.last_time, 0, mygraph_.vertices_num - 1);
-	//mygraph_.print_adjacency(cout);
-	mygraph_.bubble_sort();
-	//mygraph_.print_adjacency(cout);
-	mygraph_.dfs();
-	//mygraph_.traverce_test();
-	//mygraph_.path_check_test();
-	//printarray(cout, mygraph_.first_time, 0, mygraph_.vertices_num-1);
-	//printarray(cout, mygraph_.last_time, 0, mygraph_.vertices_num-1);
-	//mygraph_.print_time_segments(cout);
-	cout << /*"circle: " <<*/ ((mygraph_.circle) ? "True" : "False" )<<endl;
+	//g.print_adjacency(out);	
+	//g.dfs();
+	g.top_sort();
+	/*printarray(out, g.f_time, "first time", 1, g.v_num);
+	printarray(out, g.l_time, "last time", 1, g.v_num);
+	printarray(out, g.indegree, "indegree", 1, g.v_num);*/
+	printarray(cout, g.tsorted_vertices, "topological sorted graph", 1, g.v_num);
+	//g.print_time_segments(cout);
+	//cout << "circle: " << ((g.circle) ? "True" : "False" )<<endl;
 
-
+	
 
 
 
 	//«адача на проверку пути.
 	/*size_t x, y;
 	in >> x >> y;
-	mygraph_.clrvisited();
-	mygraph_.explore(x);
-	cout << ((mygraph_.visited[y - 1]) ? "True" : "False");*/
+	g.clrvisited();
+	g.explore(x);
+	cout << ((g.visited[y - 1]) ? "True" : "False");*/
 
 
 
 
 
 	//«адача на св€зность.
-	//mygraph_.dfs();
-	//cout << mygraph_.connected_component_count << endl;
+	//g.dfs();
+	//cout << g.c_c_count << endl;
 
 }
