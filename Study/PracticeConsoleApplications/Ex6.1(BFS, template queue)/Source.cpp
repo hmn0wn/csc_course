@@ -273,12 +273,12 @@ int main(){
 	//g.dfs();
 
 	size_t s, t;
-	in >> s >> t;
+	//in >> s >> t;
 
-	g.bfs(g.vertices, s);
+	//g.bfs(g.vertices, s);
 
 	//printarray(cout, g.dist, "dist", 1, g.v_num);
-	cout << /*(g.dist[t] != -1 ? g.dist[t] : -1)*/g.dist[t] << endl;
+	//cout << /*(g.dist[t] != -1 ? g.dist[t] : -1)*/g.dist[t] << endl;
 	
 	
 }

@@ -131,10 +131,10 @@ void Heap::insert(size_t *k, size_t d){
 	siftup(length);
 }
 
-size_t Heap::search(size_t *k, size_t d, size_t begin){
+/*size_t Heap::search(size_t *k, size_t d, size_t begin){
 	
 	
-}
+}*/
 
 void Heap::changepriority(size_t *k, size_t v){
 	size_t i = 1, li, ri;
