@@ -68,6 +68,8 @@ public:
 	void traverce_test();
 	void path_check_test();
 
+	void find_all_cycles(node *adj_array);
+
 };
 
 void Graph::add(node *adj_array, size_t xv, size_t yv){
@@ -215,6 +217,8 @@ void Graph::clrvisited(){
 }
 
 
+
+
 ostream &Graph::print_adjacency(ostream &stream, node *adj_array){
 	stream << endl << "adjacency list: " << endl << endl;
 	node *tmp;
@@ -256,6 +260,10 @@ ostream &Graph::print_l_t_s_v(ostream &stream){
 	return stream;
 }
 
+void Graph::find_all_cycles(node *adj_array){
+
+}
+
 int main(){
 	
 	ifstream in("input.txt");
@@ -268,19 +276,19 @@ int main(){
 	Graph g;
 	g.add(in);
 
-	//g.print_adjacency(cout, g.vertices);
+	g.print_adjacency(cout, g.vertices);
 	g.scc();
-	//g.print_adjacency(cout, g.r_vertices);
-	//g.dfs();
-	//g.top_sort();
-	//printarray(cout, g.f_time, "first time", 1, g.v_num);
-	//printarray(cout, g.l_time, "last time", 1, g.v_num);
-	//g.print_l_t_s_v(cout);
+	g.print_adjacency(cout, g.r_vertices);
+	g.dfs(g.vertices);
+	g.top_sort(g.vertices);
+	printarray(cout, g.f_time, "first time", 1, g.v_num);
+	printarray(cout, g.l_time, "last time", 1, g.v_num);
+	g.print_l_t_s_v(cout);
 	cout << g.c_c_count << endl;
 	//printarray(cout, g.indegree, "  indegree", 1, g.v_num);
 	//printarray(cout, g.tsorted_vertices, "topological sorted graph", 1, g.v_num);
 	//g.print_time_segments(cout);
-	//cout << "circle: " << ((g.circle) ? "True" : "False" )<<endl;
+	cout << "circle: " << ((g.circle) ? "True" : "False" )<<endl;
 
 	
 

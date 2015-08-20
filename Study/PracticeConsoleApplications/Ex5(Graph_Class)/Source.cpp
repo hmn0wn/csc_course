@@ -158,9 +158,9 @@ int main(){
 
 	Graph mygraph_;
 	mygraph_.add(in);
-	//mygraph_.print_adjacency(cout);
-	//mygraph_.traverce_test();
-	//mygraph_.path_check_test();
+	mygraph_.print_adjacency(cout);
+	mygraph_.traverce_test();
+	mygraph_.path_check_test();
 	
 	
 
