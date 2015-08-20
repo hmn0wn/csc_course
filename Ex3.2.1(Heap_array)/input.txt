@@ -1,0 +1,11 @@
+10
+Insert 5
+Insert 235
+extract
+Insert 54
+Insert 225
+extract
+extract
+Insert 45
+Insert 45
+extract
