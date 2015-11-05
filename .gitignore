@@ -31,3 +31,7 @@ CSCTestOnlineCourses/ReadMe.txt
 Ex1.x.x(Count_sort)/ReadMe.txt
 Ex2.2.1(Karazuba)/ReadMe.txt
 *.codeanalysis
+*.db
+*.db-journal
+Cpp/CSCcpp15/deykin.aleksandr/.svn/entries
+Cpp/CSCcpp15/deykin.aleksandr/.svn/format
