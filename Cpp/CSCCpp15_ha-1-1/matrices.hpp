@@ -6,24 +6,27 @@
 class Matrix
 {
 public:
-    Matrix(size_t rows, size_t columns);
-    Matrix(size_t rows, size_t columns, double value);
+    explicit Matrix(char const *path);
+    Matrix(size_t const rows, size_t const columns);
+    Matrix(size_t const rows, size_t const columns, double const value);
     Matrix(Matrix const &matrix);
     
     Matrix &operator=(Matrix const &matrix);
     ~Matrix();
     
     void swap(Matrix &matrix);
-    double       * const operator[] (size_t i);
-    double const * const operator[] (size_t i) const;
+    double       * operator[] (size_t const i);
+    double const * operator[] (size_t const i) const;
     
-    Matrix &operator+= (Matrix const &matrix_right_arg);
-    Matrix operator+  (Matrix const &matrix_right_arg) const;
-    //Matrix &operator*= (Matrix const &matrix_right_arg);
-    Matrix operator*  (Matrix const &matrix_right_arg) const;
+    Matrix &operator+= (Matrix const &right_arg);
+    Matrix &operator*= (Matrix const &right_arg);
     
+    
+    size_t get_rows_()    const;
+    size_t get_columns_() const;
 
     void print() const;
+
 
 private:
     size_t rows_;
@@ -31,6 +34,11 @@ private:
     double **matrix_;
 
 };
+
+Matrix operator+ (Matrix const &left_arg, Matrix const &right_arg);
+Matrix operator* (Matrix const &left_arg, Matrix const &right_arg);
+
+double **create_matrix(size_t const rows, size_t const columns);
 
 #endif // MATRICES_HPP
 

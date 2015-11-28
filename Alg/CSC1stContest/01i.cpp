@@ -32,5 +32,6 @@ int _01I(){
     if(collection[i] != collection[i+1]) ++count;
   cout << endl;
   cout << 15000 - count-1 << endl;
+  return 0;
 }
 

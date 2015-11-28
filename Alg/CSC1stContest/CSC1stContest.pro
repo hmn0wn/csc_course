@@ -15,18 +15,19 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
-    01A.cpp \
-    01B.cpp \
-    01C.cpp \
-    01D.cpp \
-    01E.cpp \
-    01K.cpp \
-    01F.cpp \
-    01G.cpp \
-    01H.cpp \
-    01I.cpp \
-    01H_.cpp
+SOURCES += main.pp \
+    01a.cpp \
+    01b.cpp \
+    01c.cpp \
+    01d.cpp \
+    01e.cpp \
+    01f.cpp \
+    01g.cpp \
+    01h.cpp \
+    01h_.cpp \
+    01i.cpp \
+    01k.cpp
+
 
 HEADERS += \
     all.hpp
