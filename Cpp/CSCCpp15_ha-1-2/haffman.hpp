@@ -4,6 +4,7 @@
 #include <utility>
 #include <algorithm>
 #include <map>
+#include <vector>
 
 
 using namespace std;
@@ -18,12 +19,14 @@ struct Node
 
                      : frequency(frequency)
                      , data(data)
+                     , code(vector<uint8_t>())
                      , parent(parent)
                      , left_child(left_child)
                      , right_child(right_child) {}
 
     uint32_t frequency;
     uint8_t  data;
+    vector<uint8_t> code;
     Node    *parent;
     Node    *left_child;
     Node    *right_child;
@@ -33,14 +36,12 @@ class HaffmanTree
 {
     string   input_path;
     string   output_path;
+    uint32_t input_file_byte_size;
 
-    uint8_t  alphabet;
     Node    *root;
-    Node    *nodes[256];
     uint32_t frequency_table[256];
-    uint8_t  haffman_table[256];
-    string   codes[256];
-    map<uint8_t, vector<uint8_t>> codes_;
+
+    map<uint8_t, Node *> leaves;
 
 
 public:
@@ -48,7 +49,8 @@ public:
     void create_tree();
     void print_fequency_table();
     void print_haffman_table();
-    void create_table();
+    void create_frequency_table();
+    void create_haffman_table();
     void encode();
     void decode();
     void delete_node(Node *node);
@@ -272,6 +274,8 @@ void THeap<Type, Prior>::change_priority(size_t it, Prior priority)
 }
 
 void heap_test();
+
+uint8_t byte_vector_to_uint8(vector<uint8_t> const &v);
 
 #endif // HAFFMAN_HPP
 

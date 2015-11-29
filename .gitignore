@@ -6,6 +6,16 @@
 *.sln
 *.ipch
 *.codeanalysisast
+*.o
+Cpp/CSCCpp15_ha-1-1/build/
+Cpp/CSCCpp15_ha-1-2/build/
+Cpp/StepicCSCCpp15/build/
+Cpp/CSCCpp15_ha-1-1/matrices_smoke_test/
+Cpp/CSCCpp15_ha-1-2/huffman_smoke_test/
+Alg/CSC2ndContest/build/
+Alg/CSC3dContest/build/
+Alg/StepicCSCAlgo/build
+Cpp/deykin.aleksandr/.svn/
 Ex1.4.2(Binary_search)/stdafx.cpp
 Ex1.x.x(Count_sort)/stdafx.cpp
 CSCTestOnlineCourses/targetver.h
@@ -33,5 +43,3 @@ Ex2.2.1(Karazuba)/ReadMe.txt
 *.codeanalysis
 *.db
 *.db-journal
-Cpp/CSCcpp15/deykin.aleksandr/.svn/entries
-Cpp/CSCcpp15/deykin.aleksandr/.svn/format
