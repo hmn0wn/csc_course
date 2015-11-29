@@ -2,25 +2,44 @@
 #include <fstream>
 #include <iostream>
 #include <bitset>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <algorithm>
 #include <iomanip>
 
 using namespace std;
 
+
+
 uint8_t byte_vector_to_uint8(vector<uint8_t> const &v)
 {
-    uint8_t result = v[0];
-    for(size_t i = 1; i < v.size(); ++i)
+    uint8_t result = v[v.size() - 1];
+    for(size_t i = 2; i <= v.size(); ++i)
     {
         result = result << 1;
-        if(v[i])
+        if(v[v.size() - i])
         {
             result += 1;
         }
     }
     return result;
+}
+
+void byte_vector_to_uint8_vector(vector<uint8_t> const &source, vector<uint8_t>  &result)
+{
+    for(size_t rit = 0; rit < result.size(); ++rit)
+    {
+        uint8_t byte = source[rit * 8];
+        for(size_t i = 1; i < 8; ++i)
+        {
+            byte = byte << 1;
+            if(source[rit * 8 + i])
+            {
+                byte += 1;
+            }
+        }
+        result[rit] = byte;
+    }
 }
 
 void printvector(vector<uint8_t> const &v)
@@ -33,7 +52,7 @@ void printvector(vector<uint8_t> const &v)
 void HaffmanTree::print_fequency_table()
 {
     uint32_t sum = 0;
-    for(uint8_t i = 0; i < 255; ++i)
+    for(size_t i = 0; i <= 255; ++i)
     {
         if(frequency_table[i])
         {
@@ -53,7 +72,7 @@ void HaffmanTree::print_fequency_table()
 void HaffmanTree::print_haffman_table()
 {
     uint32_t sum = 0;
-    for(uint8_t i = 0; i < 255; ++i)
+    for(size_t i = 0; i <= 255; ++i)
     {
         if(frequency_table[i])
         {
@@ -69,7 +88,7 @@ void HaffmanTree::print_haffman_table()
     }
     cout << endl;
     cout << "alphabet     \t" << (size_t)leaves.size() << endl;
-    cout << "freq sum     \t" << sum << endl;
+    cout << "freq sum     \t" << sum << endl << endl;
 }
 
 
@@ -81,7 +100,7 @@ HaffmanTree::HaffmanTree(string input_path, string output_path)
     , input_file_byte_size(0)
     , root(nullptr)
 {
-    for(uint8_t i = 0; i < 255; ++i)
+    for(size_t i = 0; i <= 255; ++i)
     {
         frequency_table[i] = 0;
     }
@@ -106,7 +125,7 @@ void HaffmanTree::create_tree()
 
     //Create Haffman Tree
     THeap<Node *, uint32_t> theap(511);
-    for(uint8_t i = 0; i < 255; ++i)
+    for(size_t i = 0; i <= 255; ++i)
     {
         if(frequency_table[i])
         {
@@ -147,7 +166,7 @@ void HaffmanTree::create_tree()
 
 void HaffmanTree::create_haffman_table()
 {
-    for(map<uint8_t, Node *>::iterator mit = leaves.begin(); mit != leaves.end(); ++mit)
+    for(unordered_map<uint8_t, Node *>::iterator mit = leaves.begin(); mit != leaves.end(); ++mit)
     {
         Node *it = mit->second;
 
@@ -187,7 +206,11 @@ void HaffmanTree::encode()
     uint32_t data_byte_size = 0;
 
     //cout << "saving the freq table:" << endl;
-    for(map<uint8_t, Node *>::iterator mit = leaves.begin(); mit != leaves.end(); ++mit)
+    uint32_t alphabet = leaves.size();
+    out.write(reinterpret_cast<char *>(&alphabet), sizeof(alphabet));
+    table_byte_size += 4;
+
+    for(unordered_map<uint8_t, Node *>::iterator mit = leaves.begin(); mit != leaves.end(); ++mit)
     {
         out.write(reinterpret_cast<char *>(&mit->second->data), sizeof(mit->second->data));
         //cout << hex << (size_t)mit->second->data << " : " << hex << mit->second->frequency << endl;
@@ -199,6 +222,7 @@ void HaffmanTree::encode()
     uint8_t                   byte_to_encode = 0;
     vector<uint8_t>           buf(8);
     vector<uint8_t>::iterator buf_it = buf.begin();
+    //vector<uint8_t>           result(buf.size()/8);
 
     vector<uint8_t>::const_iterator code_it;
 
@@ -226,22 +250,93 @@ void HaffmanTree::encode()
             if(buf_it == buf.end())
             {
                 uint8_t byte = byte_vector_to_uint8(buf);
-                //cout << "\t: " << bitset<8>(byte) << " ";
                 out.write(reinterpret_cast<char *>(&byte), sizeof(byte));
+                //cout << " byte:" << bitset<8>(byte);
+                //byte_vector_to_uint8_vector(buf, result);
+                //out.write(reinterpret_cast<char *>(&result.at(0)), 512/8);
                 ++data_byte_size;
                 buf_it = buf.begin();
             }
         }
         //cout << endl;
     }
-     cout << "infile size  \t" << input_file_byte_size << endl;
+     cout << endl  << "infile size  \t" << input_file_byte_size << endl;
      cout << "table size  \t" << table_byte_size << endl;
      cout << "data size  \t" << data_byte_size << endl;
      cout <<  "outfile size  \t" << data_byte_size + table_byte_size << endl;
      cout << endl << "PROFIT  \t" <<100 - (data_byte_size + table_byte_size) * 100 / input_file_byte_size << " %" << endl << endl;
 }
 
-void HaffmanTree::decode(){}
+void HaffmanTree::decode()
+{
+    cout << "decoding :" << endl << endl;
+
+
+    ifstream in(input_path, ios_base::binary);
+    ofstream out(output_path, ios_base::binary);
+    uint16_t table_byte_size = 0;
+    uint32_t data_byte_size = 0;
+    uint32_t output_file_byte_size = 0;
+
+    //cout << "saving the freq table:" << endl;
+    uint32_t alphabet = 0;
+    in.read(reinterpret_cast<char *>(&alphabet), sizeof(alphabet));
+    for(size_t i = 0; i < alphabet; ++i)
+    {
+        uint8_t byte = 0;
+
+        in.read(reinterpret_cast<char *>(&byte), sizeof(byte));
+        in.read(reinterpret_cast<char *>(frequency_table + byte), sizeof(uint32_t));
+        table_byte_size += 5;
+
+    }
+
+    create_tree();
+    create_haffman_table();
+    print_haffman_table();
+
+    uint8_t                   byte_to_decode = 0;
+
+    vector<uint8_t>::const_iterator code_it;
+    Node                           *tree_it = root;
+
+    while(in.read(reinterpret_cast<char *>(&byte_to_decode), sizeof(byte_to_decode)))
+    {
+        //cout  << endl <<  "code: " << bitset<8>(byte_to_decode) << endl;
+
+        ++data_byte_size;
+        for(size_t i = 0; i < 8; ++i)
+        {
+            uint8_t end_bit = byte_to_decode - ((byte_to_decode >> 1) << 1);
+            byte_to_decode = byte_to_decode >> 1;
+            //cout  << (size_t)end_bit;
+            if(end_bit)
+            {
+                tree_it = tree_it->right_child;
+            }
+            else
+            {
+                tree_it = tree_it->left_child;
+            }
+
+            if(tree_it->left_child == nullptr || tree_it->right_child == nullptr)
+            {
+                out.write(reinterpret_cast<char *>(&tree_it->data), sizeof(tree_it->data));
+                ++output_file_byte_size;
+                //cout  << endl << "decoded: " << bitset<8>(tree_it->data) << endl;
+                tree_it = root;
+            }
+
+       }
+    }
+    input_file_byte_size = table_byte_size + data_byte_size;
+
+    cout << endl << endl << "infile size  \t" << input_file_byte_size << endl;
+    cout << "table size  \t" << table_byte_size << endl;
+    cout << "data size  \t" << data_byte_size << endl;
+    cout << "outfile size  \t" << output_file_byte_size << endl;
+}
+
 
 void HaffmanTree::delete_node(Node *node)
 {

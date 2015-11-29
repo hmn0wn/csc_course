@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <utility>
 #include <algorithm>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 
@@ -41,7 +41,7 @@ class HaffmanTree
     Node    *root;
     uint32_t frequency_table[256];
 
-    map<uint8_t, Node *> leaves;
+    unordered_map<uint8_t, Node *> leaves;
 
 
 public:
