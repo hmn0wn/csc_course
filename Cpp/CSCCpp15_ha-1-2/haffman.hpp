@@ -22,7 +22,10 @@ struct Node
                      , code(vector<uint8_t>())
                      , parent(parent)
                      , left_child(left_child)
-                     , right_child(right_child) {}
+                     , right_child(right_child)
+    {
+        code.reserve(30);
+    }
 
     uint32_t frequency;
     uint8_t  data;

@@ -221,7 +221,9 @@ void HaffmanTree::encode()
 
     uint8_t                   byte_to_encode = 0;
     vector<uint8_t>           buf(8);
-    vector<uint8_t>::iterator buf_it = buf.begin();
+    vector<uint8_t>::iterator buf_it = buf.begin()
+                            , buf_end = buf.end()
+                            , buf_begin = buf.begin();
     //vector<uint8_t>           result(buf.size()/8);
 
     vector<uint8_t>::const_iterator code_it;
@@ -229,25 +231,25 @@ void HaffmanTree::encode()
     while(in.read(reinterpret_cast<char *>(&byte_to_encode), sizeof(byte_to_encode)))
     {
         vector<uint8_t> &cur_code = leaves.find(byte_to_encode)->second->code;
+        vector<uint8_t>::const_iterator code_end = cur_code.end();
         code_it = cur_code.begin();
 
         //cout << byte_to_encode << " : ";
         //printvector(cur_code);
 
-
-        while(code_it < cur_code.end())
+        while(code_it < code_end)
         {
             *buf_it = *code_it;
             ++buf_it;
             ++code_it;
 
-            if(code_it == cur_code.end() && in.peek() == EOF)
+            if(code_it == code_end && in.peek() == EOF)
             {
-                fill(buf_it, buf.end(), 0);
-                buf_it = buf.end();
+                fill(buf_it, buf_end, 0);
+                buf_it = buf_end;
             }
 
-            if(buf_it == buf.end())
+            if(buf_it == buf_end)
             {
                 uint8_t byte = byte_vector_to_uint8(buf);
                 out.write(reinterpret_cast<char *>(&byte), sizeof(byte));
@@ -255,7 +257,7 @@ void HaffmanTree::encode()
                 //byte_vector_to_uint8_vector(buf, result);
                 //out.write(reinterpret_cast<char *>(&result.at(0)), 512/8);
                 ++data_byte_size;
-                buf_it = buf.begin();
+                buf_it = buf_begin;
             }
         }
         //cout << endl;
@@ -274,6 +276,7 @@ void HaffmanTree::decode()
 
     ifstream in(input_path, ios_base::binary);
     ofstream out(output_path, ios_base::binary);
+
     uint16_t table_byte_size = 0;
     uint32_t data_byte_size = 0;
     uint32_t output_file_byte_size = 0;
@@ -281,56 +284,76 @@ void HaffmanTree::decode()
     //cout << "saving the freq table:" << endl;
     uint32_t alphabet = 0;
     in.read(reinterpret_cast<char *>(&alphabet), sizeof(alphabet));
-    for(size_t i = 0; i < alphabet; ++i)
+
+    if(alphabet == 1)
     {
         uint8_t byte = 0;
+        uint32_t frequency = 0;
 
         in.read(reinterpret_cast<char *>(&byte), sizeof(byte));
-        in.read(reinterpret_cast<char *>(frequency_table + byte), sizeof(uint32_t));
+        in.read(reinterpret_cast<char *>(&frequency), sizeof(frequency));
         table_byte_size += 5;
 
-    }
-
-    create_tree();
-    create_haffman_table();
-    print_haffman_table();
-
-    uint8_t                   byte_to_decode = 0;
-
-    vector<uint8_t>::const_iterator code_it;
-    Node                           *tree_it = root;
-
-    while(in.read(reinterpret_cast<char *>(&byte_to_decode), sizeof(byte_to_decode)))
-    {
-        //cout  << endl <<  "code: " << bitset<8>(byte_to_decode) << endl;
-
-        ++data_byte_size;
-        for(size_t i = 0; i < 8; ++i)
+        for(size_t i = 0; i < frequency; ++i)
         {
-            uint8_t end_bit = byte_to_decode - ((byte_to_decode >> 1) << 1);
-            byte_to_decode = byte_to_decode >> 1;
-            //cout  << (size_t)end_bit;
-            if(end_bit)
-            {
-                tree_it = tree_it->right_child;
-            }
-            else
-            {
-                tree_it = tree_it->left_child;
-            }
+            out.write(reinterpret_cast<char *>(&byte), sizeof(byte));
+            ++output_file_byte_size;
+        }
 
-            if(tree_it->left_child == nullptr || tree_it->right_child == nullptr)
-            {
-                out.write(reinterpret_cast<char *>(&tree_it->data), sizeof(tree_it->data));
-                ++output_file_byte_size;
-                //cout  << endl << "decoded: " << bitset<8>(tree_it->data) << endl;
-                tree_it = root;
-            }
-
-       }
     }
-    input_file_byte_size = table_byte_size + data_byte_size;
+    else
+    {
+        for(size_t i = 0; i < alphabet; ++i)
+        {
+            uint8_t byte = 0;
 
+            in.read(reinterpret_cast<char *>(&byte), sizeof(byte));
+            in.read(reinterpret_cast<char *>(frequency_table + byte), sizeof(uint32_t));
+            table_byte_size += 5;
+
+        }
+
+        create_tree();
+        create_haffman_table();
+        print_haffman_table();
+
+        uint8_t                   byte_to_decode = 0;
+
+        vector<uint8_t>::const_iterator code_it;
+        Node                           *tree_it = root;
+
+        while(in.read(reinterpret_cast<char *>(&byte_to_decode), sizeof(byte_to_decode)))
+        {
+            //cout  << endl <<  "code: " << bitset<8>(byte_to_decode) << endl;
+
+            ++data_byte_size;
+            for(size_t i = 0; i < 8; ++i)
+            {
+                uint8_t end_bit = byte_to_decode - ((byte_to_decode >> 1) << 1);
+                byte_to_decode = byte_to_decode >> 1;
+                //cout  << (size_t)end_bit;
+                if(end_bit)
+                {
+                    tree_it = tree_it->right_child;
+                }
+                else
+                {
+                    tree_it = tree_it->left_child;
+                }
+
+                if(tree_it->left_child == nullptr || tree_it->right_child == nullptr)
+                {
+                    out.write(reinterpret_cast<char *>(&tree_it->data), sizeof(tree_it->data));
+                    ++output_file_byte_size;
+                    //cout  << endl << "decoded: " << bitset<8>(tree_it->data) << endl;
+                    tree_it = root;
+                }
+
+           }
+        }
+        input_file_byte_size = table_byte_size + data_byte_size;
+
+    }
     cout << endl << endl << "infile size  \t" << input_file_byte_size << endl;
     cout << "table size  \t" << table_byte_size << endl;
     cout << "data size  \t" << data_byte_size << endl;
