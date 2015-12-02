@@ -1,8 +1,6 @@
 #pragma GCC optimize ("O2")
 #include "haffman.hpp"
 #include <iostream>
-#include <math.h>
-#include <time.h>
 #include <stdexcept>
 
 
@@ -12,13 +10,9 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    /*clock_t begin_time = clock();
-    HaffmanTree htree("./empty.0.in", "./empty.0.in.p");
-    htree.encode();*/
-
     try
     {
-        clock_t begin_time = clock();
+
         if(argc != 6)
         {
             throw std::runtime_error("Wrong argv string.");
@@ -54,10 +48,7 @@ int main(int argc, char *argv[])
 
             HaffmanTree htree(input_file, output_file);
             htree.encode();
-            clock_t encoding_end = clock();
-            cout << endl;
-            cout << "encoding: " << ((float)(encoding_end - begin_time))/CLOCKS_PER_SEC << " seconds" << endl;
-            cout << endl;
+
             return 0;
         }
 
@@ -65,9 +56,7 @@ int main(int argc, char *argv[])
         {
             HaffmanTree htree_dec(input_file, output_file);
             htree_dec.decode();
-            clock_t decoding_end = clock();
-            cout << "decoding: " << ((float)(decoding_end - begin_time))/CLOCKS_PER_SEC << " seconds" << endl;
-            cout << endl;
+
             return 0;
         }
 
@@ -79,10 +68,7 @@ int main(int argc, char *argv[])
         return 1;
 
     }
-    /*clock_t encoding_end = clock();
-    cout << endl;
-    cout << "encoding: " << ((float)(encoding_end - begin_time))/CLOCKS_PER_SEC << " seconds" << endl;
-    cout << endl;*/
+
     return 0;
 }
 

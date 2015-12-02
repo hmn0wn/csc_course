@@ -1,8 +1,8 @@
 #ifndef HAFFMAN_HPP
 #define HAFFMAN_HPP
 #include <cstddef>
-#include <utility>
-#include <algorithm>
+//#include <utility>
+//#include <algorithm>
 #include <unordered_map>
 #include <vector>
 
@@ -13,9 +13,9 @@ struct Node
 {
     Node(     uint32_t frequency = 0
             , uint8_t  data = 0
-            , Node    *parent = nullptr
-            , Node    *left_child = nullptr
-            , Node    *right_child = nullptr)
+            , Node     *parent = nullptr
+            , Node     *left_child = nullptr
+            , Node     *right_child = nullptr)
 
                      : frequency(frequency)
                      , data(data)
@@ -38,12 +38,12 @@ struct Node
         }
     }
 
-    uint32_t frequency;
-    uint8_t  data;
+    uint32_t        frequency;
+    uint8_t         data;
     vector<uint8_t> code;
-    Node    *parent;
-    Node    *left_child;
-    Node    *right_child;
+    Node            *parent;
+    Node            *left_child;
+    Node            *right_child;
 };
 
 class HaffmanTree
@@ -53,6 +53,8 @@ class HaffmanTree
     uint32_t input_file_byte_size;
 
     Node    *root;
+    uint16_t alphabet;
+    uint16_t max_alphabet;
     vector<uint32_t> frequency_table;
 
     unordered_map<uint8_t, Node *> leaves;

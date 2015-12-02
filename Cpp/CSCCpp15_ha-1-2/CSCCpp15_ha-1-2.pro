@@ -1,5 +1,3 @@
-QT += core
-QT -= gui
 
 TARGET = CSCCpp15_ha-1-2
 CONFIG += console
