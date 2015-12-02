@@ -3,6 +3,7 @@
 #include <iostream>
 #include <math.h>
 #include <time.h>
+#include <stdexcept>
 
 
 using namespace std;
@@ -11,42 +12,77 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    clock_t begin_time = clock();
+    /*clock_t begin_time = clock();
+    HaffmanTree htree("./empty.0.in", "./empty.0.in.p");
+    htree.encode();*/
 
-    //heap_test();
-    //HaffmanTree htree("./../tests/empty.0.in", "./../tests/haffman_output_test.bin");
-
-    //HaffmanTree htree("./../tests/haffman_input_test.txt", "./../tests/haffman_output_test.bin");
-    //HaffmanTree htree("./../tests/5mb_input", "./../tests/5mb_.archived");
-    HaffmanTree htree("./../tests/NCTSLINK2015.csv", "./../tests/NCTSLINK2015.csv.archived");
-    //HaffmanTree htree("./../tests/aaaaaaaabaaaaaaa.2.in", "./../tests/aaaaaaaabaaaaaaa.2.in.archived");
-    //HaffmanTree htree("./../tests/5M_ff.in", "./../tests/5M_ff.in.archived");
-    //HaffmanTree htree("./../tests/aaaaaaaaaaaaaaaa.in", "./../tests/aaaaaaaaaaaaaaaa.in.archived");
-    htree.encode();
+    try
+    {
+        clock_t begin_time = clock();
+        if(argc != 6)
+        {
+            throw std::runtime_error("Wrong argv string.");
+        }
 
 
-    clock_t encoding_end = clock();
+        std::string input_file;
+        std::string output_file;
 
-    //HaffmanTree htree_dec("./../tests/haffman_output_test.bin", "./../tests/haffman_input_test.unarchive");
-    //HaffmanTree htree_dec("./../tests/5mb_.archived", "./../tests/5mb_.unarchived");
-    HaffmanTree htree_dec("./../tests/NCTSLINK2015.csv.archived", "./../tests/NCTSLINK2015.csv.unarchive");
-    //HaffmanTree htree_dec("./../tests/aaaaaaaabaaaaaaa.2.in.archived", "./../tests/aaaaaaaabaaaaaaa.2.in.unarchive");
-    //HaffmanTree htree_dec("./../tests/5M_ff.in.archived", "./../tests/5M_ff.in.unarchive");
-    //HaffmanTree htree_dec("./../tests/aaaaaaaaaaaaaaaa.in.archived", "./../tests/aaaaaaaaaaaaaaaa.in.unarchive");
-    htree_dec.decode();
+        std::string key2 = argv[2];
+        if(key2 == "-f" || key2 == "--file")
+        {
+            input_file = argv[3];
+        }
+        else
+        {
+            throw std::runtime_error("Wrong argv string.");
+        }
 
+        std::string key3 = argv[4];
+        if(key3 == "-o" || key3 == "--output")
+        {
+            output_file = argv[5];
+        }
+        else
+        {
+            throw std::runtime_error("Wrong argv string.");
+        }
+
+        std::string key1 = argv[1];
+        if(key1 == "-c")
+        {
+
+            HaffmanTree htree(input_file, output_file);
+            htree.encode();
+            clock_t encoding_end = clock();
+            cout << endl;
+            cout << "encoding: " << ((float)(encoding_end - begin_time))/CLOCKS_PER_SEC << " seconds" << endl;
+            cout << endl;
+            return 0;
+        }
+
+        if(key1 == "-u")
+        {
+            HaffmanTree htree_dec(input_file, output_file);
+            htree_dec.decode();
+            clock_t decoding_end = clock();
+            cout << "decoding: " << ((float)(decoding_end - begin_time))/CLOCKS_PER_SEC << " seconds" << endl;
+            cout << endl;
+            return 0;
+        }
+
+        throw std::runtime_error("Wrong argv string.");
+    }
+    catch(std::runtime_error const &ex)
+    {
+        std::cerr << "Error: " << ex.what() << std::endl;
+        return 1;
+
+    }
+    /*clock_t encoding_end = clock();
     cout << endl;
     cout << "encoding: " << ((float)(encoding_end - begin_time))/CLOCKS_PER_SEC << " seconds" << endl;
-
-    clock_t decoding_end = clock();
-    cout << "decoding: " << ((float)(decoding_end - encoding_end))/CLOCKS_PER_SEC << " seconds" << endl;
-
-    clock_t end_time = clock() - begin_time;
-    end_time;
-    true;
-    cout << "total: " << ((float)end_time)/CLOCKS_PER_SEC << " seconds" << endl;
-    cout << endl;
+    cout << endl;*/
     return 0;
-
 }
 

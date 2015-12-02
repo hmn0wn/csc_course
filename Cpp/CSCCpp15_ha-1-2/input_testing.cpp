@@ -109,7 +109,7 @@ void create_input_test()
 
 
     ifstream in("./../endian_test_input", ios::binary);
-    uint8_t buf[4];
+
 
     in.read(reinterpret_cast<char *>(&tmp), sizeof(uint32_t));
     cout << tmp;

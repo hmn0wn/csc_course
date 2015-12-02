@@ -27,6 +27,17 @@ struct Node
         code.reserve(30);
     }
 
+    ~Node()
+    {
+        if(this != nullptr){
+            if(this->left_child != nullptr)
+                delete this->left_child;
+
+            if(this->right_child != nullptr)
+                delete this->right_child;
+        }
+    }
+
     uint32_t frequency;
     uint8_t  data;
     vector<uint8_t> code;
@@ -42,13 +53,13 @@ class HaffmanTree
     uint32_t input_file_byte_size;
 
     Node    *root;
-    uint32_t frequency_table[256];
+    vector<uint32_t> frequency_table;
 
     unordered_map<uint8_t, Node *> leaves;
 
 
 public:
-    HaffmanTree(string input_path, string output_path);
+    HaffmanTree(string const &input_path, string const &output_path);
     void create_tree();
     void print_fequency_table();
     void print_haffman_table();

@@ -94,16 +94,14 @@ void HaffmanTree::print_haffman_table()
 
 
 
-HaffmanTree::HaffmanTree(string input_path, string output_path)
+HaffmanTree::HaffmanTree(string const &input_path, string const &output_path)
     : input_path(input_path)
     , output_path(output_path)
     , input_file_byte_size(0)
     , root(nullptr)
+
 {
-    for(size_t i = 0; i <= 255; ++i)
-    {
-        frequency_table[i] = 0;
-    }
+    frequency_table.resize(256, 0);
 }
 
 void HaffmanTree::create_frequency_table()
@@ -194,84 +192,88 @@ void HaffmanTree::create_haffman_table()
 
 void HaffmanTree::encode()
 {
-    cout << "encoding :" << endl << endl;
+    cout << endl << "encoding :" << endl;
     create_frequency_table();
     create_tree();
     create_haffman_table();
-    print_haffman_table();
+    //print_haffman_table();
 
     ifstream in(input_path, ios_base::binary);
     ofstream out(output_path, ios_base::binary);
     uint16_t table_byte_size = 0;
     uint32_t data_byte_size = 0;
 
-    //cout << "saving the freq table:" << endl;
-    uint32_t alphabet = leaves.size();
-    out.write(reinterpret_cast<char *>(&alphabet), sizeof(alphabet));
-    table_byte_size += 4;
+    if(input_file_byte_size){
+        //cout << "saving the freq table:" << endl;
+        uint32_t alphabet = leaves.size();
+        out.write(reinterpret_cast<char *>(&alphabet), sizeof(alphabet));
+        table_byte_size += 4;
 
-    for(unordered_map<uint8_t, Node *>::iterator mit = leaves.begin(); mit != leaves.end(); ++mit)
-    {
-        out.write(reinterpret_cast<char *>(&mit->second->data), sizeof(mit->second->data));
-        //cout << hex << (size_t)mit->second->data << " : " << hex << mit->second->frequency << endl;
-        out.write(reinterpret_cast<char *>(&mit->second->frequency), sizeof(mit->second->frequency));
-        table_byte_size += 5;
-
-    }
-
-    uint8_t                   byte_to_encode = 0;
-    vector<uint8_t>           buf(8);
-    vector<uint8_t>::iterator buf_it = buf.begin()
-                            , buf_end = buf.end()
-                            , buf_begin = buf.begin();
-    //vector<uint8_t>           result(buf.size()/8);
-
-    vector<uint8_t>::const_iterator code_it;
-
-    while(in.read(reinterpret_cast<char *>(&byte_to_encode), sizeof(byte_to_encode)))
-    {
-        vector<uint8_t> &cur_code = leaves.find(byte_to_encode)->second->code;
-        vector<uint8_t>::const_iterator code_end = cur_code.end();
-        code_it = cur_code.begin();
-
-        //cout << byte_to_encode << " : ";
-        //printvector(cur_code);
-
-        while(code_it < code_end)
+        for(unordered_map<uint8_t, Node *>::iterator mit = leaves.begin(); mit != leaves.end(); ++mit)
         {
-            *buf_it = *code_it;
-            ++buf_it;
-            ++code_it;
+            out.write(reinterpret_cast<char *>(&mit->second->data), sizeof(mit->second->data));
+            //cout << hex << (size_t)mit->second->data << " : " << hex << mit->second->frequency << endl;
+            out.write(reinterpret_cast<char *>(&mit->second->frequency), sizeof(mit->second->frequency));
+            table_byte_size += 5;
 
-            if(code_it == code_end && in.peek() == EOF)
-            {
-                fill(buf_it, buf_end, 0);
-                buf_it = buf_end;
-            }
-
-            if(buf_it == buf_end)
-            {
-                uint8_t byte = byte_vector_to_uint8(buf);
-                out.write(reinterpret_cast<char *>(&byte), sizeof(byte));
-                //cout << " byte:" << bitset<8>(byte);
-                //byte_vector_to_uint8_vector(buf, result);
-                //out.write(reinterpret_cast<char *>(&result.at(0)), 512/8);
-                ++data_byte_size;
-                buf_it = buf_begin;
-            }
         }
-        //cout << endl;
+
+        uint8_t                   byte_to_encode = 0;
+        vector<uint8_t>           buf(8);
+
+
+        size_t  buf_it = 0
+              , buf_end = buf.size();
+
+        //vector<uint8_t>           result(buf.size()/8);
+
+        size_t code_it = 0;
+
+        while(in.read(reinterpret_cast<char *>(&byte_to_encode), sizeof(byte_to_encode)))
+        {
+            vector<uint8_t> &cur_code = leaves.find(byte_to_encode)->second->code;
+            size_t           code_end = cur_code.size();
+            code_it = 0;
+
+            //cout << byte_to_encode << " : ";
+            //printvector(cur_code);
+
+            while(code_it < code_end)
+            {
+                buf[buf_it] = cur_code[code_it];
+                ++buf_it;
+                ++code_it;
+
+                if(code_it == code_end && in.peek() == EOF)
+                {
+                    fill(buf.begin() + buf_it, buf.end(), 0);
+                    buf_it = buf_end;
+                }
+
+                if(buf_it == buf_end)
+                {
+                    uint8_t byte = byte_vector_to_uint8(buf);
+                    out.write(reinterpret_cast<char *>(&byte), sizeof(byte));
+                    //cout << " byte:" << bitset<8>(byte);
+                    //byte_vector_to_uint8_vector(buf, result);
+                    //out.write(reinterpret_cast<char *>(&result.at(0)), 512/8);
+                    ++data_byte_size;
+                    buf_it = 0;
+                }
+            }
+            //cout << endl;
+        }
     }
-     cout << endl  << "infile size  \t" << input_file_byte_size << endl;
-     cout << "table size  \t" << table_byte_size << endl;
-     cout << "data size  \t" << data_byte_size << endl;
-     cout <<  "outfile size  \t" << data_byte_size + table_byte_size << endl;
-     cout << endl << "PROFIT  \t" <<100 - (data_byte_size + table_byte_size) * 100 / input_file_byte_size << " %" << endl << endl;
+    cout << "infile size  \t" << input_file_byte_size << endl;
+    cout << "table size  \t" << table_byte_size << endl;
+    cout << "data size  \t" << data_byte_size << endl;
+    cout <<  "outfile size  \t" << data_byte_size + table_byte_size << endl;
+    cout << endl << "PROFIT  \t" <<100 - (data_byte_size + table_byte_size) * 100 / (input_file_byte_size ? input_file_byte_size : 1) << " %" << endl << endl;
 }
 
 void HaffmanTree::decode()
 {
-    cout << "decoding :" << endl << endl;
+    cout << "decoding :" << endl;
 
 
     ifstream in(input_path, ios_base::binary);
@@ -280,10 +282,12 @@ void HaffmanTree::decode()
     uint16_t table_byte_size = 0;
     uint32_t data_byte_size = 0;
     uint32_t output_file_byte_size = 0;
+    uint32_t freq_sum = 0;
 
     //cout << "saving the freq table:" << endl;
     uint32_t alphabet = 0;
     in.read(reinterpret_cast<char *>(&alphabet), sizeof(alphabet));
+    table_byte_size += 4;
 
     if(alphabet == 1)
     {
@@ -308,14 +312,16 @@ void HaffmanTree::decode()
             uint8_t byte = 0;
 
             in.read(reinterpret_cast<char *>(&byte), sizeof(byte));
-            in.read(reinterpret_cast<char *>(frequency_table + byte), sizeof(uint32_t));
+            in.read(reinterpret_cast<char *>(&frequency_table[byte]), sizeof(uint32_t));
+            freq_sum += frequency_table[byte];
             table_byte_size += 5;
 
         }
 
         create_tree();
         create_haffman_table();
-        print_haffman_table();
+        //print_haffman_table();
+        //cout << "freq_sum_: " << freq_sum << endl;
 
         uint8_t                   byte_to_decode = 0;
 
@@ -345,38 +351,30 @@ void HaffmanTree::decode()
                 {
                     out.write(reinterpret_cast<char *>(&tree_it->data), sizeof(tree_it->data));
                     ++output_file_byte_size;
+                    if(output_file_byte_size == freq_sum)
+                    {
+                        break;
+                    }
                     //cout  << endl << "decoded: " << bitset<8>(tree_it->data) << endl;
                     tree_it = root;
                 }
 
            }
         }
+        //cout << endl;
         input_file_byte_size = table_byte_size + data_byte_size;
 
     }
-    cout << endl << endl << "infile size  \t" << input_file_byte_size << endl;
+    cout << endl << "infile size  \t" << input_file_byte_size << endl;
     cout << "table size  \t" << table_byte_size << endl;
     cout << "data size  \t" << data_byte_size << endl;
     cout << "outfile size  \t" << output_file_byte_size << endl;
 }
 
 
-void HaffmanTree::delete_node(Node *node)
-{
-    if(node != nullptr){
-        if(node->left_child != nullptr)
-            delete_node(node->left_child);
-
-        if(node->right_child != nullptr)
-            delete_node(node->right_child);
-
-        delete node;
-    }
-}
-
 HaffmanTree::~HaffmanTree()
 {
-     delete_node(root);     
+     delete root;
 }
 
 
