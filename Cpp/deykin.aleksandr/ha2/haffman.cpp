@@ -1,7 +1,7 @@
-#include "haffman.hpp"
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "haffman.hpp"
 
 using namespace std;
 
